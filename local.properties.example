@@ -1,0 +1,3 @@
+
+// Currency beacon API key. https://currencybeacon.com/
+currencyBeacon.apiKey="<api_key>" // Testing API key - 9f8c8014d1fdb81c07bc33e55a7bd3ac

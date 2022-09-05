@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Exchange Rates</string>
+    <string name="currency_conversion_from_input_label">From</string>
+    <string name="currency_conversion_to_input_label">To</string>
+    <string name="currency_conversion_card_title">Currency conversions</string>
+    <string name="currency_rates_header">Currency rates</string>
+    <string name="currency_rates_base_currency_button_prefix">Base currency</string>
+    <string name="currency_selection_title">Currency selection</string>
+    <string name="currency_selection_text_query_label">Search</string>
+    <string name="currency_selection_favorites_only">Favorites only</string>
+    <string name="currency_detail_currency_code_label">Currency code</string>
+    <string name="currency_detail_countries_label">Countries</string>
+    <string name="currency_detail_error_could_not_be_loaded">Currency detail could not be loaded</string>
+    <string name="unknown_rate">Unknown rate</string>
+    <string name="no_internet_connection_status_bar_disconnected">Disconnected</string>
+    <string name="no_internet_connection_status_bar_used_data_fom">Using data from: %s</string>
+    <string name="splash_button_retry">Retry</string>
+    <string name="currency_detail_symbol_label">Symbol</string>
+    <string name="currency_detail_precision_label">Precision</string>
+    <string name="currency_detail_symbol_first_label">Symbol position</string>
+    <string name="currency_detail_decimal_separator_label">Decimal separator</string>
+    <string name="currency_detail_thousands_separator_label">Group separator</string>
+    <string name="currency_detail_symbol_position_before_value">Before value</string>
+    <string name="currency_detail_symbol_position_after_value">After value</string>
+    <string name="currency_detail_number_code_label">Number code</string>
+    <string name="error_data_unknown">Unknown data error. Please try again</string>
+    <string name="error_data_invalid_output_format">Invalid data error</string>
+    <string name="error_data_no_internet_connection">Error, please check your internet connection</string>
+    <string name="error_data_request_limit_reached">Request limit has been reached</string>
+    <string name="error_data_resource_not_found">Data not found</string>
+    <string name="error_data_service_unavailable">Service is unavailable</string>
+    <string name="error_data_timeout">Timeout error</string>
+    <string name="error_data_unauthorized">Unauthorized request error</string>
+    <string name="error_domain_currency_not_found">Currency not found</string>
+    <string name="error_domain_currency_rate_not_found">Currency rate not found</string>
+    <string name="error_ui_currency_not_selected">Please select a currency</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_data_unauthorized_full_explanation">Unauthorized request\n\nPlease check your API key in local.properties, or refer to project\'s readme file for more information how to obtain it (section installation)</string>
+</resources>

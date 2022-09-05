@@ -1,0 +1,11 @@
+# Debug Key
+debug.keyAlias=<debug key alias>
+debug.keyPassword=<debug key password>
+debug.storeFile=<path to debug keystore>
+debug.storePassword=<debug keystore password>
+
+# Release Key
+release.keyAlias=<release key alias>
+release.keyPassword=<release key password>
+release.storeFile=<path to release keystore>
+release.storePassword=<release keystore password>

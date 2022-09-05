@@ -1,0 +1,25 @@
+package com.ofilip.exchange_rates.domain.useCase
+
+import com.ofilip.exchange_rates.core.entity.Currency
+import com.ofilip.exchange_rates.core.error.DomainError
+import com.ofilip.exchange_rates.data.repository.CurrencyRepository
+import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+abstract class GetCurrencyUseCase {
+
+    abstract fun execute(currencyCode: String): Flow<Result<Currency>>
+}
+
+class GetCurrencyUseCaseImpl @Inject constructor(
+    private val currencyRepository: CurrencyRepository
+) : GetCurrencyUseCase() {
+    override fun execute(currencyCode: String): Flow<Result<Currency>> =
+        currencyRepository.getCurrency(currencyCode).map {
+            it.mapCatching { currency ->
+                currency ?: throw DomainError.CurrencyNotFound(currencyCode)
+            }
+        }
+
+}

@@ -1,0 +1,173 @@
+///////////////////////////////////////
+// VERSIONS
+
+def versions = [:]
+ext.versions = versions
+versions.compileSdk = 33
+versions.targetSdk = 33
+versions.minSdk = 21
+versions.coreKtx = '1.9.0'
+versions.lifecycleRuntimeKtx = '2.5.1'
+versions.activityCompose = '1.6.1'
+versions.compose = '1.3.3'
+versions.composeMaterial = '1.3.1'
+versions.junit = '4.13.2'
+versions.androidJunit = '1.1.3'
+versions.espressoCore = '3.4.0'
+versions.retrofit = '2.9.0'
+versions.retrofitLogging = '4.9.0'
+versions.room = '2.5.0'
+versions.gson = '2.10.1'
+versions.hilt = '2.44.2'
+versions.hiltNavigation = '1.0.0'
+versions.lifecycleViewModelCompose = '2.5.1'
+versions.composeNavigation = '2.5.3'
+versions.coroutines = '1.6.4'
+versions.jackson = '2.14.0'
+versions.timber = '5.0.1'
+versions.datastore = '1.0.0'
+versions.hiltWork = '1.0.0'
+versions.hiltCompiler = '1.0.0'
+versions.protobuf = '3.18.0'
+versions.protobufProtoc = '3.19.4'
+versions.workRuntime = '2.7.1'
+versions.swipeRefresh = '0.29.0-alpha'
+versions.systemUiController = '0.28.0'
+versions.toolbarCompose = '2.3.5'
+versions.junit = '4.12'
+versions.junitJupiter = '5.3.2'
+versions.mockitoCore = '5.3.1'
+versions.mockitoKotlin = '4.1.0'
+versions.androidxCore = '1.5.0'
+versions.workTest = '2.8.1'
+versions.coroutinesTest = '1.7.0'
+versions.protobufPlugin = '0.8.17'
+
+
+
+///////////////////////////////////////
+// LIBS
+
+def libs = [:]
+ext.libs = libs
+
+// Androidx
+libs.coreKtx = "androidx.core:core-ktx:${versions.coreKtx}"
+libs.lifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycleRuntimeKtx}"
+libs.lifecycleViewModelCompose = "androidx.lifecycle:lifecycle-viewmodel-compose:${versions.lifecycleViewModelCompose}"
+libs.activityCompose = "androidx.activity:activity-compose:${versions.activityCompose}"
+libs.datastorePreferences = "androidx.datastore:datastore-preferences:${versions.datastore}"
+libs.datastore = "androidx.datastore:datastore:${versions.datastore}"
+libs.datastoreCore = "androidx.datastore:datastore-core:${versions.datastore}"
+libs.workRuntimeKtx = "androidx.work:work-runtime-ktx:${versions.workRuntime}"
+
+// Compose
+libs.composeUi = "androidx.compose.ui:ui:${versions.compose}"
+libs.composeMaterial = "androidx.compose.material:material:${versions.composeMaterial}"
+libs.composeUiPreview = "androidx.compose.ui:ui-tooling-preview:${versions.compose}"
+libs.composeNavigation = "androidx.navigation:navigation-compose:${versions.composeNavigation}"
+libs.compose = [
+        libs.composeUi,
+        libs.composeMaterial,
+        libs.composeUiPreview,
+        libs.composeNavigation,
+]
+
+// Room
+libs.roomBase = "androidx.room:room-ktx:${versions.room}"
+libs.roomRuntime = "androidx.room:room-runtime:${versions.room}"
+libs.room = [
+        libs.roomBase,
+        libs.roomRuntime
+]
+
+// Retrofit
+libs.retrofitCore = "com.squareup.retrofit2:retrofit:${versions.retrofit}"
+libs.retrofitJackson = "com.squareup.retrofit2:converter-jackson:${versions.retrofit}"
+libs.retrofitLogging = "com.squareup.okhttp3:logging-interceptor:$versions.retrofitLogging"
+libs.retrofit = [
+        libs.retrofitCore,
+        libs.retrofitJackson,
+        libs.retrofitLogging
+]
+
+
+// Hilt
+libs.hiltAndroid = "com.google.dagger:hilt-android:${versions.hilt}"
+libs.hiltNavigation = "androidx.hilt:hilt-navigation-compose:${versions.hiltNavigation}"
+libs.hiltWork = "androidx.hilt:hilt-work:${versions.hiltWork}"
+libs.hilt = [
+        libs.hiltAndroid,
+        libs.hiltNavigation,
+        libs.hiltWork
+]
+
+// Accompanist
+libs.swipeRefresh = "com.google.accompanist:accompanist-swiperefresh:${versions.swipeRefresh}"
+libs.systemUiController = "com.google.accompanist:accompanist-systemuicontroller:${versions.systemUiController}"
+
+// Others
+libs.gson = "com.google.code.gson:gson:${versions.gson}"
+libs.coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.coroutines}"
+libs.timber = "com.jakewharton.timber:timber:${versions.timber}"
+libs.protobuf = "com.google.protobuf:protobuf-javalite:${versions.protobuf}"
+libs.protobufProtoc = "com.google.protobuf:protoc:${versions.protobufProtoc}"
+libs.toolbarCompose = "me.onebone:toolbar-compose:${versions.toolbarCompose}"
+
+///////////////////////////////////////
+// DEBUG LIBS
+
+def debugLibs = [:]
+ext.debugLibs = debugLibs
+debugLibs.composeUiTooling = "androidx.compose.ui:ui-tooling:${versions.compose}"
+debugLibs.composeUiManifest = "androidx.compose.ui:ui-test-manifest:${versions.compose}"
+debugLibs.compose = [
+        debugLibs.composeUiTooling,
+        debugLibs.composeUiManifest
+]
+
+
+///////////////////////////////////////
+// KAPT LIBS
+
+def kaptLibs = [:]
+ext.kaptLibs = kaptLibs
+
+kaptLibs.roomCompiler = "androidx.room:room-compiler:${versions.room}"
+kaptLibs.hiltDaggerCompiler = "com.google.dagger:hilt-compiler:${versions.hilt}"
+kaptLibs.hiltCompiler = "androidx.hilt:hilt-compiler:${versions.hiltCompiler}"
+
+
+///////////////////////////////////////
+// TEST LIBS
+
+def testLibs = [:]
+ext.testLibs = testLibs
+
+// Junit
+testLibs.junit = "junit:junit:${versions.junit}"
+
+// Junit Jupiter
+testLibs.junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:${versions.junitJupiter}"
+testLibs.junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${versions.junitJupiter}"
+testLibs.junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:${versions.junitJupiter}"
+testLibs.junitJupiter = [
+        testLibs.junitJupiterApi,
+        testLibs.junitJupiterEngine,
+        testLibs.junitJupiterParams
+]
+
+// Mockito
+testLibs.mockitoCore = "org.mockito:mockito-core:${versions.mockitoCore}"
+testLibs.mockitoKotlin = "org.mockito.kotlin:mockito-kotlin:${versions.mockitoKotlin}"
+testLibs.mockito = [
+        testLibs.mockitoCore,
+        testLibs.mockitoKotlin
+]
+
+// AndroidX
+testLibs.androidxCore = "androidx.test:core:${versions.androidxCore}"
+testLibs.work = "androidx.work:work-testing:${versions.workTest}"
+
+// Others
+testLibs.coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${versions.coroutinesTest}"
