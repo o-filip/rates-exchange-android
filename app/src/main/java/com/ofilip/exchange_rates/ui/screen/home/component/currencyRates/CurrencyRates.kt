@@ -2,6 +2,7 @@ package com.ofilip.exchange_rates.ui.screen.home.component.currencyRates
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,7 +38,7 @@ import com.ofilip.exchange_rates.ui.util.Dimens
 @Composable
 fun CurrencyRatesSection(
     modifier: Modifier = Modifier,
-    viewModel: RatesOverviewViewModel = hiltViewModel(),
+    viewModel: CurrencyRatesViewModel = hiltViewModel(),
     onNavigateToCurrencySelection: () -> Unit,
     onNavigateToCurrencyDetail: (currencyCode: String) -> Unit,
 ) {
@@ -60,7 +61,7 @@ fun CurrencyRatesSection(
 @Composable
 fun CurrencyRatesSectionContent(
     modifier: Modifier = Modifier,
-    uiState: RatesOverviewUiState,
+    uiState: CurrencyRatesUiState,
     onNavigateToCurrencySelection: () -> Unit,
     onNavigateToCurrencyDetail: (currencyCode: String) -> Unit,
     refreshData: () -> Unit,
@@ -75,7 +76,11 @@ fun CurrencyRatesSectionContent(
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
-        LazyColumn {
+        LazyColumn(
+            contentPadding = PaddingValues(
+                bottom = Dimens.spacingSmall()
+            )
+        ) {
             currencyRatesSection(
                 onNavigateToCurrencySelection = onNavigateToCurrencySelection,
                 onNavigateToCurrencyDetail = onNavigateToCurrencyDetail,
@@ -180,7 +185,7 @@ fun LazyListScope.currencyRatesSection(
 fun CurrencyRatesSectionContentPreviewLight() {
     ExchangeRatesTheme {
         CurrencyRatesSectionContent(
-            uiState = RatesOverviewUiState(
+            uiState = CurrencyRatesUiState(
                 rates = listOf(
                     CurrencyRate("EUR", 1.0),
                     CurrencyRate("USD", 1.2),
@@ -202,7 +207,7 @@ fun CurrencyRatesSectionContentPreviewLight() {
 fun CurrencyRatesSectionContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencyRatesSectionContent(
-            uiState = RatesOverviewUiState(
+            uiState = CurrencyRatesUiState(
                 rates = listOf(
                     CurrencyRate("EUR", 1.0),
                     CurrencyRate("USD", 1.2),

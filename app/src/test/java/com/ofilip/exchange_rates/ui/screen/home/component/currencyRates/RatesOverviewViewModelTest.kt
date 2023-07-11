@@ -25,7 +25,7 @@ import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
 class RatesOverviewViewModelTest {
-    private lateinit var viewModel: RatesOverviewViewModel
+    private lateinit var viewModel: CurrencyRatesViewModel
 
     private val mockGetOverviewRatesUseCase: GetRatesForOverviewUseCase = mock()
     private val mockCurrencyRepository: CurrencyRepository = mock()
@@ -36,7 +36,7 @@ class RatesOverviewViewModelTest {
     fun setup() {
         Dispatchers.setMain(testCoroutineScope)
 
-        viewModel = RatesOverviewViewModel(
+        viewModel = CurrencyRatesViewModel(
             getOverviewRatesUseCase = mockGetOverviewRatesUseCase,
             currencyRepository = mockCurrencyRepository,
             uiErrorConverter = mockUiErrorConverter
@@ -53,7 +53,7 @@ class RatesOverviewViewModelTest {
         // Given
         val mockRates = Fixtures.localRates
         val mockOverviewCurrency = "USD"
-        val expectedState = RatesOverviewUiState(
+        val expectedState = CurrencyRatesUiState(
             rates = mockRates,
             ratesLoading = false,
             overviewCurrency = mockOverviewCurrency,
@@ -100,7 +100,7 @@ class RatesOverviewViewModelTest {
         verify(mockUiErrorConverter).convertToText(exception)
         verify(mockGetOverviewRatesUseCase).execute()
         verify(mockCurrencyRepository).overviewBaseCurrency
-        assertEquals(errorMessage, viewModel.uiState.value.rrrorMessage)
+        assertEquals(errorMessage, viewModel.uiState.value.baseCurrencyErrorMessage)
         assertEquals(mockRates, viewModel.uiState.value.rates)
     }
 

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class RatesOverviewUiState(
+data class CurrencyRatesUiState(
     val rates: List<CurrencyRate> = emptyList(),
     val ratesLoading: Boolean = false,
     val overviewCurrency: String? = null,
@@ -22,14 +22,14 @@ data class RatesOverviewUiState(
 )
 
 @HiltViewModel
-class RatesOverviewViewModel @Inject constructor(
+class CurrencyRatesViewModel @Inject constructor(
     private val getOverviewRatesUseCase: GetRatesForOverviewUseCase,
     private val currencyRepository: CurrencyRepository,
     private val uiErrorConverter: UiErrorConverter
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(RatesOverviewUiState())
-    val uiState: StateFlow<RatesOverviewUiState> get() = _uiState
+    private val _uiState = MutableStateFlow(CurrencyRatesUiState())
+    val uiState: StateFlow<CurrencyRatesUiState> get() = _uiState
 
     private var isInitialized = false
 

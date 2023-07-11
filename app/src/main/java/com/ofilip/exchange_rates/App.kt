@@ -42,7 +42,7 @@ class App : Application(), Configuration.Provider {
         WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 CURRENCY_LIST_UPDATE_WORK_ID,
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 worker
             )
     }

@@ -16,7 +16,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 
@@ -71,7 +73,7 @@ class SplashViewModelTest {
             onBlocking { execute() } doReturn Result.failure(exception)
         }
         mockUiErrorConverter.stub {
-            on { convertToText(any()) } doReturn errorMessage
+            on { convertToText(any(), anyOrNull()) } doReturn errorMessage
         }
 
         val expectedState = SplashUiState(
@@ -88,7 +90,7 @@ class SplashViewModelTest {
         val uiState = viewModel.uiState.value
 
         verify(mockInitializeAppUseCase).execute()
-        verify(mockUiErrorConverter).convertToText(exception)
+        verify(mockUiErrorConverter).convertToText(eq(exception), any())
         assertEquals(expectedState, uiState)
     }
 

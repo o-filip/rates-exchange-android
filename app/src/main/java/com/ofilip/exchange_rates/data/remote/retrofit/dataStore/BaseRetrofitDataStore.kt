@@ -1,7 +1,6 @@
 package com.ofilip.exchange_rates.data.remote.retrofit.dataStore
 
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException
-import com.ofilip.exchange_rates.core.error.BaseError
 import com.ofilip.exchange_rates.core.error.DataError
 import com.ofilip.exchange_rates.data.remote.retrofit.ResponseWrapper
 import java.io.IOException
