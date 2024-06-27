@@ -1,5 +1,6 @@
 package com.ofilip.exchange_rates.ui.navigation
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
@@ -14,7 +15,7 @@ import androidx.navigation.compose.composable
  */
 fun <T : Dest> NavGraphBuilder.composable(
     dest: T,
-    content: @Composable (NavBackStackEntry) -> Unit
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
     composable(
         route = dest.route,

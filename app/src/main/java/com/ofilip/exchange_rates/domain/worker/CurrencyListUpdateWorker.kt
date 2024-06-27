@@ -10,6 +10,7 @@ import dagger.assisted.AssistedInject
 
 /**
  * Worker prefetching currency list form webservice and storing it into database
+ * We don't expect currency list to change often, so we prefetch it once a day
  */
 @HiltWorker
 class CurrencyListUpdateWorker @AssistedInject constructor(

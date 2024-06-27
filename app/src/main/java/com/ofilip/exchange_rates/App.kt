@@ -26,9 +26,10 @@ class App : Application(), Configuration.Provider {
         initWorkers()
     }
 
-    override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder()
-        .setWorkerFactory(workerFactory)
-        .build()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     private fun initWorkers() {
         val worker = PeriodicWorkRequestBuilder<CurrencyListUpdateWorker>(1, TimeUnit.DAYS)
