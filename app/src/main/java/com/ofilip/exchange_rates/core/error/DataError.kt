@@ -4,21 +4,33 @@ sealed class DataError @JvmOverloads constructor(
     override val message: String? = null,
     override val cause: Throwable? = null
 ) : BaseError() {
-    object NoInternetConnection : DataError()
+    data object NoInternetConnection : DataError() {
+        private fun readResolve(): Any = NoInternetConnection
+    }
 
-    object Timeout: DataError()
+    data object Timeout: DataError() {
+        private fun readResolve(): Any = Timeout
+    }
 
     data class InvalidOutputFormat(
         val data: Any? = null
     ): DataError()
 
-    object ResourceNotFound : DataError()
+    data object ResourceNotFound : DataError() {
+        private fun readResolve(): Any = ResourceNotFound
+    }
 
-    object Unauthorized: DataError()
+    data object Unauthorized: DataError() {
+        private fun readResolve(): Any = Unauthorized
+    }
 
-    object ServiceUnavailable: DataError()
+    data object ServiceUnavailable: DataError() {
+        private fun readResolve(): Any = ServiceUnavailable
+    }
 
-    object RequestLimitReached: DataError()
+    data object RequestLimitReached: DataError() {
+        private fun readResolve(): Any = RequestLimitReached
+    }
 
     data class Unknown @JvmOverloads constructor(
         override val cause: Throwable? = null,

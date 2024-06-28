@@ -35,18 +35,19 @@ class MainActivity : ComponentActivity() {
                 darkTheme = darkTheme ?: isSystemInDarkTheme()
             ) {
                 Surface(
-                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
                 ) {
-                    connectionStatus?.onSuccess {
-                        Column(Modifier.fillMaxSize()) {
+                    Column(Modifier.fillMaxSize()) {
+                        connectionStatus?.onSuccess {
                             AnimatedVisibility(
                                 visible = !it.isConnected
                             ) {
                                 NoInternetConnectionStatusBar(connectionStatus = it)
                             }
-
-                            AppNavHost()
                         }
+
+                        AppNavHost()
                     }
 
                 }

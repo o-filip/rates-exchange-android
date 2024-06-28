@@ -24,7 +24,7 @@ fun Modifier.conditional(
 
 
 fun Modifier.screenHorizontalPadding(): Modifier = composed {
-    padding(horizontal = Dimens.screenHorizontalPadding())
+    then(padding(horizontal = Dimens.screenHorizontalPadding()))
 }
 
 

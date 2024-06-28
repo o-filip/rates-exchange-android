@@ -56,7 +56,8 @@ class CurrencyRatesViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = uiState.value.copy(
                 ratesLoading = true,
-                ratesLoadErrorMessage = null
+                ratesLoadErrorMessage = null,
+                baseCurrencyErrorMessage = null,
             )
 
             getOverviewRatesUseCase.execute().collect { result ->

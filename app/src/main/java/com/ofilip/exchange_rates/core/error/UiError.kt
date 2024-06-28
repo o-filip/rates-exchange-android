@@ -4,5 +4,7 @@ sealed class UiError @JvmOverloads constructor(
     override val message: String? = null,
     override val cause: Throwable? = null
 ) : BaseError() {
-    object CurrencyNotSelected : UiError()
+    data object CurrencyNotSelected : UiError() {
+        private fun readResolve(): Any = CurrencyNotSelected
+    }
 }

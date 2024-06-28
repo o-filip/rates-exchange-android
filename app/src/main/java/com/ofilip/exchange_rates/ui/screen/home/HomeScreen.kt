@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertMedium
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
 import com.ofilip.exchange_rates.ui.navigation.DefaultDest
@@ -31,14 +32,16 @@ fun HomeScreen(
 ) {
     CollapsingToolbarScaffold(
         state = rememberCollapsingToolbarScaffoldState(),
-        modifier = modifier,
+        modifier = modifier.clipToBounds(),
         scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
         toolbar = {
-            Column(modifier = Modifier
-                .screenHorizontalPadding()
-                .padding(
-                    bottom = Dimens.spacingMedium()
-                )) {
+            Column(
+                modifier = Modifier
+                    .screenHorizontalPadding()
+                    .padding(
+                        bottom = Dimens.spacingMedium()
+                    )
+            ) {
                 ThemeToggleSection(
                     modifier = Modifier
                         .fillMaxWidth()

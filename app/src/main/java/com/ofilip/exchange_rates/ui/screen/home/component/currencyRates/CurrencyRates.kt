@@ -108,52 +108,12 @@ fun LazyListScope.currencyRatesSection(
     onNavigateToCurrencyDetail: (currencyCode: String) -> Unit
 ) {
     item {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium.copy(
-                bottomEnd = CornerSize(0.dp),
-                bottomStart = CornerSize(0.dp)
-            ),
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = Dimens.cardHorizontalPadding())
-                    .padding(top = Dimens.cardVerticalPadding())
-                    .padding(bottom = Dimens.spacingLarge())
-            ) {
-                Text(
-                    text = stringResource(id = R.string.currency_rates_header),
-                    style = MaterialTheme.typography.h3
-                )
-
-                SpacerVertMedium()
-
-                if (baseCurrencyErrorMessage != null) {
-                    Text(
-                        text = baseCurrencyErrorMessage,
-                        style = MaterialTheme.typography.body1
-                    )
-
-                    SpacerVertMedium()
-                }
-
-                if (ratesLoadErrorMessage != null) {
-                    Text(
-                        text = ratesLoadErrorMessage,
-                        style = MaterialTheme.typography.body1
-                    )
-
-                    SpacerVertMedium()
-                }
-
-                CurrencySelectionButton(
-                    onClick = onNavigateToCurrencySelection,
-                    currencyCode = baseCurrency,
-                    prefixText = "${stringResource(id = R.string.currency_rates_base_currency_button_prefix)}: ",
-                )
-            }
-        }
+        CurrencyRatesSectionHeader(
+            baseCurrency =  baseCurrency,
+            baseCurrencyErrorMessage = baseCurrencyErrorMessage,
+            ratesLoadErrorMessage = ratesLoadErrorMessage,
+            onNavigateToCurrencySelection = onNavigateToCurrencySelection,
+        )
     }
 
     items(
@@ -176,6 +136,63 @@ fun LazyListScope.currencyRatesSection(
                 topStart = CornerSize(0.dp)
             ),
         ) {}
+    }
+}
+
+@Composable
+
+fun CurrencyRatesSectionHeader(
+    modifier: Modifier = Modifier,
+    baseCurrency: String?,
+    baseCurrencyErrorMessage: String?,
+    ratesLoadErrorMessage: String?,
+    onNavigateToCurrencySelection: () -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium.copy(
+            bottomEnd = CornerSize(0.dp),
+            bottomStart = CornerSize(0.dp)
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = Dimens.cardHorizontalPadding())
+                .padding(top = Dimens.cardVerticalPadding())
+                .padding(bottom = Dimens.spacingLarge())
+        ) {
+            Text(
+                text = stringResource(id = R.string.currency_rates_header),
+                style = MaterialTheme.typography.h3
+            )
+
+            SpacerVertMedium()
+
+            if (baseCurrencyErrorMessage != null) {
+                Text(
+                    text = baseCurrencyErrorMessage,
+                    style = MaterialTheme.typography.body1
+                )
+
+                SpacerVertMedium()
+            }
+
+            if (ratesLoadErrorMessage != null) {
+                Text(
+                    text = ratesLoadErrorMessage,
+                    style = MaterialTheme.typography.body1
+                )
+
+                SpacerVertMedium()
+            }
+
+            CurrencySelectionButton(
+                onClick = onNavigateToCurrencySelection,
+                currencyCode = baseCurrency,
+                prefixText = "${stringResource(id = R.string.currency_rates_base_currency_button_prefix)}: ",
+            )
+        }
     }
 }
 
