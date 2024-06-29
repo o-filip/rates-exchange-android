@@ -19,8 +19,6 @@ import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.ui.component.button.SpacerHorizontalMedium
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertMedium
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
-import com.ofilip.exchange_rates.ui.navigation.DefaultDest
-import com.ofilip.exchange_rates.ui.navigation.Dest
 import com.ofilip.exchange_rates.ui.screen.home.component.currencyConversion.CurrencyConversionSection
 import com.ofilip.exchange_rates.ui.screen.home.component.currencyRates.CurrencyRatesSection
 import com.ofilip.exchange_rates.ui.screen.home.component.themeToggle.ThemeToggleSection
@@ -29,9 +27,6 @@ import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
-object HomeScreenDest : Dest by DefaultDest("home") {
-    fun path(): String = "home"
-}
 
 @Composable
 fun HomeScreen(

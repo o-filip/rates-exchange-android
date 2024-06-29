@@ -21,11 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertLarge
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
-import com.ofilip.exchange_rates.ui.navigation.DefaultDest
-import com.ofilip.exchange_rates.ui.navigation.Dest
 import com.ofilip.exchange_rates.ui.theme.ExchangeRatesTheme
 
-object SplashScreenDest : Dest by DefaultDest("splash")
 
 @Composable
 fun SplashScreen(

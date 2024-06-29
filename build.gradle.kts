@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.devtoolsKsp) apply false
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.junit5) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }

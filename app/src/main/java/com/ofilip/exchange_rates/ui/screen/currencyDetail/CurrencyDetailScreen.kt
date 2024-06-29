@@ -15,7 +15,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,29 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.ui.component.button.ArrowNavBack
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertMedium
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
-import com.ofilip.exchange_rates.ui.navigation.DefaultDest
-import com.ofilip.exchange_rates.ui.navigation.Dest
 import com.ofilip.exchange_rates.ui.theme.ExchangeRatesTheme
 import com.ofilip.exchange_rates.ui.util.Dimens
 
-object CurrencyDetailScreenDest : Dest by DefaultDest("currencyDetail/{currencyCode}") {
-    override val arguments: List<NamedNavArgument> = listOf(
-        navArgument("currencyCode") {
-            type = NavType.StringType
-            nullable = false
-        }
-    )
-
-    fun path(currencyCode: String): String = "currencyDetail/$currencyCode"
-}
 
 @Composable
 fun CurrencyDetailScreen(

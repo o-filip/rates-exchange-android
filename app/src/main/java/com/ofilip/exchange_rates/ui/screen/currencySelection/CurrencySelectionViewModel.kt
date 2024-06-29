@@ -9,7 +9,6 @@ import com.ofilip.exchange_rates.core.extensions.collectIn
 import com.ofilip.exchange_rates.core.extensions.filterWithPrev
 import com.ofilip.exchange_rates.domain.useCase.currency.GetFilteredCurrenciesUseCase
 import com.ofilip.exchange_rates.domain.useCase.currency.UpdateCurrencyFavoriteStateUseCase
-import com.ofilip.exchange_rates.ui.navigation.decodeListStringFromNavPath
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -25,7 +24,7 @@ data class CurrencySelectionUiState(
     val currencies: List<Currency> = emptyList(),
     val query: TextFieldValue = TextFieldValue(),
     val showOnlyFavorites: Boolean = false,
-    val selectedCurrencies: List<String>? = null,
+    val selectedCurrency: String? = null,
     val filteringErrorMessage: String? = null,
     val userSelectedCurrency: String? = null,
 )
@@ -38,15 +37,15 @@ class CurrencySelectionViewModel @Inject constructor(
     private val uiErrorConverter: UiErrorConverter
 ) : ViewModel() {
 
-    private val preselectedCurrency: List<String> =
-        (checkNotNull(savedStateHandle["preselectedCurrencies"]) as String).decodeListStringFromNavPath()
+    private val preselectedCurrency: String =
+        checkNotNull(savedStateHandle["preselectedCurrency"]) as String
 
     private val _uiState = MutableStateFlow(CurrencySelectionUiState())
     val uiState: StateFlow<CurrencySelectionUiState> get() = _uiState
 
     init {
         _uiState.value = _uiState.value.copy(
-            selectedCurrencies = preselectedCurrency,
+            selectedCurrency = preselectedCurrency,
         )
         initFilteringByQuery()
     }

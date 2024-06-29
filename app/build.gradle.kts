@@ -13,6 +13,8 @@ plugins {
     id("de.mannodermaus.android-junit5")
     id("io.gitlab.arturbosch.detekt")
     id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.plugin.parcelize")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 val getApkName: (BuildType, DefaultConfig) -> String = { buildType, defaultConfig ->
@@ -177,6 +179,8 @@ dependencies {
     implementation(libs.vicoViews)
     implementation(libs.yCharts)
     implementation(libs.composeShimmer)
+    implementation(libs.kotlin.serialization.json)
+    implementation(libs.kotlin.stdlib)
 
     // Test
     testImplementation(libs.testUnit)
