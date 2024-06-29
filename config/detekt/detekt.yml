@@ -740,6 +740,8 @@ style:
   UnusedPrivateMember:
     active: true
     allowedNames: 'readResolve'
+    ignoreAnnotated:
+      - 'Preview'
   UnusedPrivateProperty:
     active: true
     allowedNames: '_|ignored|expected|serialVersionUID'

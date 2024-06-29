@@ -82,7 +82,7 @@ fun SplashScreenContent(
 
 @Preview
 @Composable
-fun SplashScreenPreviewLight() {
+private fun SplashScreenPreviewLight() {
     ExchangeRatesTheme {
         SplashScreenContent(
             uiState = SplashUiState(
@@ -97,7 +97,7 @@ fun SplashScreenPreviewLight() {
 
 @Preview
 @Composable
-fun SplashScreenPreviewDark() {
+private fun SplashScreenPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         SplashScreenContent(
             uiState = SplashUiState(

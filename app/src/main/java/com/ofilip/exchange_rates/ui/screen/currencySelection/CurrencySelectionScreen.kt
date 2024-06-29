@@ -1,6 +1,5 @@
 package com.ofilip.exchange_rates.ui.screen.currencySelection
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -51,7 +50,6 @@ fun CurrencySelectionScreen(
         onCurrencyLikeToggled = { viewModel.toggleCurrencyLike(it) })
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CurrencySelectionScreenContent(
     modifier: Modifier = Modifier,
@@ -90,28 +88,45 @@ fun CurrencySelectionScreenContent(
 
             SpacerVertMedium()
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(
-                    uiState.currencies,
-                    key = { currency -> currency.currencyCode }
-                ) { currency ->
-                    CurrencySelectionListItem(
-                        modifier = Modifier
-                            .padding(vertical = 4.dp)
-                            .animateItem(),
-                        currency = currency,
-                        isSelected = uiState.selectedCurrency == currency.currencyCode,
-                        onSelected = { onCurrencySelected(currency) },
-                        onFavoriteToggle = { onCurrencyLikeToggled(currency) })
-                }
-            }
+            CurrenciesList(
+                modifier = Modifier.weight(1f),
+                currencies = uiState.currencies,
+                selectedCurrency = uiState.selectedCurrency,
+                onCurrencySelected = onCurrencySelected,
+                onCurrencyLikeToggled = onCurrencyLikeToggled
+            )
+        }
+    }
+}
+
+@Composable
+private fun CurrenciesList(
+    modifier: Modifier = Modifier,
+    currencies: List<Currency>,
+    selectedCurrency: String?,
+    onCurrencySelected: (Currency) -> Unit,
+    onCurrencyLikeToggled: (Currency) -> Unit
+) {
+    LazyColumn(modifier = modifier) {
+        items(
+            currencies,
+            key = { currency -> currency.currencyCode }
+        ) { currency ->
+            CurrencySelectionListItem(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .animateItem(),
+                currency = currency,
+                isSelected = selectedCurrency == currency.currencyCode,
+                onSelected = { onCurrencySelected(currency) },
+                onFavoriteToggle = { onCurrencyLikeToggled(currency) })
         }
     }
 }
 
 @Preview
 @Composable
-fun CurrencySelectionScreenContentPreviewLight() {
+private fun CurrencySelectionScreenContentPreviewLight() {
     ExchangeRatesTheme {
         CurrencySelectionScreenContent(uiState = CurrencySelectionUiState(
             currencies = listOf(
@@ -143,7 +158,7 @@ fun CurrencySelectionScreenContentPreviewLight() {
 
 @Preview
 @Composable
-fun CurrencySelectionScreenContentPreviewDark() {
+private fun CurrencySelectionScreenContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencySelectionScreenContent(uiState = CurrencySelectionUiState(
             currencies = listOf(

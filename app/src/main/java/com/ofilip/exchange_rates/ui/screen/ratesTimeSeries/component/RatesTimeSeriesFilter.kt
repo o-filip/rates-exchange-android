@@ -96,7 +96,7 @@ fun RatesTimeSeriesFilterContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun RatesTimeSeriesDateRangeSelection(
+private fun RatesTimeSeriesDateRangeSelection(
     modifier: Modifier = Modifier,
     dateRange: RatesTimeSeriesDateRange,
     onDateChanged: (RatesTimeSeriesDateRange) -> Unit,
@@ -156,7 +156,7 @@ fun RatesTimeSeriesDateRangeSelection(
 }
 
 @Composable
-fun RatesTimeSeriesFilterCurrenciesSection(
+private fun RatesTimeSeriesFilterCurrenciesSection(
     modifier: Modifier = Modifier,
     baseCurrency: String,
     currency: String,

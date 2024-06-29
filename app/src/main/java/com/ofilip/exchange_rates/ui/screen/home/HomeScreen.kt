@@ -58,7 +58,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeScreenToolbar(
+private fun HomeScreenToolbar(
     modifier: Modifier = Modifier,
     onNavigateToRatesTimeSeries: () -> Unit,
     onNavigateToCurrencySelection: (
@@ -98,7 +98,7 @@ fun HomeScreenToolbar(
 
 
 @Composable
-fun RatesTimeSeriesButton(
+private fun RatesTimeSeriesButton(
     modifier: Modifier = Modifier, onClick: () -> Unit
 ) {
     IconButton(
@@ -114,7 +114,7 @@ fun RatesTimeSeriesButton(
 
 @Preview
 @Composable
-fun RatesTimeSeriesButtonPreview() {
+private fun RatesTimeSeriesButtonPreview() {
     RatesTimeSeriesButton(onClick = {})
 }
 

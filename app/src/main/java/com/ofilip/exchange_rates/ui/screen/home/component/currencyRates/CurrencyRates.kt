@@ -103,7 +103,7 @@ fun CurrencyRatesSectionContent(
     }
 }
 
-fun LazyListScope.currencyRatesSection(
+private fun LazyListScope.currencyRatesSection(
     baseCurrency: String?,
     baseCurrencyErrorMessage: String?,
     ratesLoadErrorMessage: String?,
@@ -150,8 +150,7 @@ fun LazyListScope.currencyRatesSection(
 }
 
 @Composable
-
-fun CurrencyRatesSectionHeader(
+private fun CurrencyRatesSectionHeader(
     modifier: Modifier = Modifier,
     baseCurrency: String?,
     baseCurrencyErrorMessage: String?,
@@ -181,20 +180,14 @@ fun CurrencyRatesSectionHeader(
                 text = stringResource(id = R.string.currency_rates_header),
                 style = MaterialTheme.typography.h3
             )
-            SpacerVertMedium()
-            // Error message
-            if (ratesLoadErrorMessage != null || baseCurrencyErrorMessage != null) {
-                Text(
-                    text = when {
-                        ratesLoadErrorMessage != null -> ratesLoadErrorMessage
-                        baseCurrencyErrorMessage != null -> baseCurrencyErrorMessage
-                        else -> "$ratesLoadErrorMessage\n$baseCurrencyErrorMessage"
-                    },
-                    style = MaterialTheme.typography.body1
-                )
 
-                SpacerVertMedium()
-            }
+            SpacerVertMedium()
+
+            ErrorMessage(
+                ratesLoadErrorMessage = ratesLoadErrorMessage,
+                baseCurrencyErrorMessage = baseCurrencyErrorMessage
+            )
+
             // Base currency selection button
             CurrencySelectionButton(
                 onClick = {
@@ -211,10 +204,32 @@ fun CurrencyRatesSectionHeader(
     }
 }
 
+@Composable
+private fun ErrorMessage(
+    modifier: Modifier = Modifier,
+    ratesLoadErrorMessage: String?,
+    baseCurrencyErrorMessage: String?
+) {
+    if (ratesLoadErrorMessage != null || baseCurrencyErrorMessage != null) {
+        Column(modifier = modifier) {
+            Text(
+                text = when {
+                    ratesLoadErrorMessage != null -> ratesLoadErrorMessage
+                    baseCurrencyErrorMessage != null -> baseCurrencyErrorMessage
+                    else -> "$ratesLoadErrorMessage\n$baseCurrencyErrorMessage"
+                },
+                style = MaterialTheme.typography.body1
+            )
+
+            SpacerVertMedium()
+        }
+    }
+}
+
 
 @Preview
 @Composable
-fun CurrencyRatesSectionContentPreviewLight() {
+private fun CurrencyRatesSectionContentPreviewLight() {
     ExchangeRatesTheme {
         CurrencyRatesSectionContent(
             uiState = CurrencyRatesUiState(
@@ -237,7 +252,7 @@ fun CurrencyRatesSectionContentPreviewLight() {
 
 @Preview
 @Composable
-fun CurrencyRatesSectionContentPreviewDark() {
+private fun CurrencyRatesSectionContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencyRatesSectionContent(
             uiState = CurrencyRatesUiState(
