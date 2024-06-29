@@ -1,10 +1,11 @@
 package com.ofilip.exchange_rates.data.repository
 
+import com.ofilip.exchange_rates.core.di.AppDispatchers
 import com.ofilip.exchange_rates.core.di.BaseRatesCurrency
 import com.ofilip.exchange_rates.core.di.CurrencyRemoteFetchLimitMs
+import com.ofilip.exchange_rates.core.di.Dispatcher
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.core.entity.RatesTimeSeriesItem
-import com.ofilip.exchange_rates.core.extensions.toResultFlow
 import com.ofilip.exchange_rates.core.network.ConnectivityStatusHelper
 import com.ofilip.exchange_rates.data.convert.CurrencyRateConverter
 import com.ofilip.exchange_rates.data.convert.RatesTimeSeriesConverter
@@ -12,8 +13,10 @@ import com.ofilip.exchange_rates.data.local.dataStore.CurrencyRateLocalDataStore
 import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import org.joda.time.DateTime
 
 @Singleton
@@ -26,13 +29,14 @@ class CurrencyRateRepositoryImpl @Inject constructor(
     @BaseRatesCurrency
     private val baseCurrency: String,
     @CurrencyRemoteFetchLimitMs
-    private val currencyRemoteFetchLimitMs: Long
+    private val currencyRemoteFetchLimitMs: Long,
+    @Dispatcher(AppDispatchers.IO) private val dispatcher: CoroutineDispatcher
 ) : BaseRepository(), CurrencyRateRepository {
 
-    override val lastCurrencyRateLoadTimestampMs: Flow<Result<Long>>
-        get() = repoFetch { currencyRateLocalDataStore.lastRatesLoadTimestampMs.toResultFlow() }
+    override val lastCurrencyRateLoadTimestampMs: Flow<Long>
+        get() = repoFetch { currencyRateLocalDataStore.lastRatesLoadTimestampMs }
 
-    override fun getRates(currencyCodes: List<String>): Flow<Result<List<CurrencyRate>>> =
+    override fun getRates(currencyCodes: List<String>): Flow<List<CurrencyRate>> =
         fetchCachedResource(
             shouldFetchFromRemote = {
                 connectivityStatusHelper.isConnected.value &&
@@ -50,17 +54,17 @@ class CurrencyRateRepositoryImpl @Inject constructor(
                 })
             },
             onSuccessfulRemoteFetch = { updateLastRatesLoadTimestampToNow() }
-        )
+        ).flowOn(dispatcher)
 
-    private suspend fun insertRates(rates: List<CurrencyRate>): Result<Unit> = repoDoNoResult {
+    private suspend fun insertRates(rates: List<CurrencyRate>): Unit = repoDoWithoutResult {
         currencyRateLocalDataStore.insert(rates)
     }
 
-    private suspend fun deleteAllRates(): Result<Unit> = repoDoNoResult {
+    private suspend fun deleteAllRates() = repoDoWithoutResult {
         currencyRateLocalDataStore.deleteAll()
     }
 
-    private suspend fun updateLastRatesLoadTimestampToNow(): Result<Unit> = repoDoNoResult {
+    private suspend fun updateLastRatesLoadTimestampToNow() = repoDoWithoutResult {
         currencyRateLocalDataStore.setLastRatesLoadTimestampMs(System.currentTimeMillis())
     }
 
@@ -69,7 +73,7 @@ class CurrencyRateRepositoryImpl @Inject constructor(
         endDate: DateTime,
         baseCurrencyCode: String,
         currencyCodes: List<String>
-    ): Result<List<RatesTimeSeriesItem>> = repoFetchSuspend {
+    ): List<RatesTimeSeriesItem> = repoFetchSuspend {
         currencyRemoteDataStore.getRatesTimeSeries(
             startDate,
             endDate,

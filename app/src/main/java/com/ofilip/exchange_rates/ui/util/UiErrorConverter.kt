@@ -2,6 +2,7 @@ package com.ofilip.exchange_rates.ui.util
 
 import android.content.Context
 import com.ofilip.exchange_rates.R
+import com.ofilip.exchange_rates.core.error.BaseException
 import com.ofilip.exchange_rates.core.error.DataError
 import com.ofilip.exchange_rates.core.error.DomainError
 import com.ofilip.exchange_rates.core.error.UiError
@@ -46,6 +47,7 @@ class UiErrorConverterImpl @Inject constructor(
             DataError.ServiceUnavailable -> context.getString(R.string.error_data_service_unavailable)
             DataError.Timeout -> context.getString(R.string.error_data_timeout)
             DataError.Unauthorized -> context.getString(R.string.error_data_unauthorized)
+            is DataError.LocalDataError -> TODO()
         }
 
 

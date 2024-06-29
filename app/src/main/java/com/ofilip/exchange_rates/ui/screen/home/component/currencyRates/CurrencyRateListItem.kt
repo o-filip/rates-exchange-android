@@ -73,7 +73,7 @@ fun CurrencyRateListItem(
 
 @Preview
 @Composable
-fun CurrencyRateListItemPreviewLight() {
+private fun CurrencyRateListItemPreviewLight() {
     ExchangeRatesTheme {
         CurrencyRateListItem(
             currencyRate = CurrencyRate("EUR", 1.5),
@@ -84,7 +84,7 @@ fun CurrencyRateListItemPreviewLight() {
 
 @Preview
 @Composable
-fun CurrencyRateListItemPreviewDark() {
+private fun CurrencyRateListItemPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencyRateListItem(
             currencyRate = CurrencyRate("EUR", 1.5),

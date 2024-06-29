@@ -16,33 +16,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.ui.component.SimpleTopBar
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertMedium
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
-import com.ofilip.exchange_rates.ui.navigation.DefaultDest
-import com.ofilip.exchange_rates.ui.navigation.Dest
-import com.ofilip.exchange_rates.ui.navigation.encodeToNavPath
 import com.ofilip.exchange_rates.ui.screen.currencySelection.component.CurrencyFilterSection
 import com.ofilip.exchange_rates.ui.screen.currencySelection.component.CurrencySelectionListItem
 import com.ofilip.exchange_rates.ui.theme.ExchangeRatesTheme
 import com.ofilip.exchange_rates.ui.util.Dimens
 
-object CurrencySelectionScreenDest :
-    Dest by DefaultDest("currencySelection?preselectedCurrencies={preselectedCurrencies}") {
-
-    fun path(preselectedCurrencies: List<String>): String =
-        "currencySelection?preselectedCurrencies=${preselectedCurrencies.encodeToNavPath()}"
-
-    override val arguments: List<NamedNavArgument> =
-        listOf(
-            navArgument("preselectedCurrencies") { type = NavType.StringType }
-        )
-}
 
 @Composable
 fun CurrencySelectionScreen(
@@ -56,10 +39,6 @@ fun CurrencySelectionScreen(
         if (uiState.userSelectedCurrency != null) {
             onNavigateBack(uiState.userSelectedCurrency)
         }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.init()
     }
 
     CurrencySelectionScreenContent(modifier = modifier,
@@ -109,25 +88,45 @@ fun CurrencySelectionScreenContent(
 
             SpacerVertMedium()
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(
-                    uiState.currencies,
-                ) { currency ->
-                    CurrencySelectionListItem(modifier = Modifier.padding(vertical = 4.dp),
-                        currency = currency,
-                        isSelected = uiState.selectedCurrencies?.contains(currency.currencyCode)
-                            ?: false,
-                        onSelected = { onCurrencySelected(currency) },
-                        onFavoriteToggle = { onCurrencyLikeToggled(currency) })
-                }
-            }
+            CurrenciesList(
+                modifier = Modifier.weight(1f),
+                currencies = uiState.currencies,
+                selectedCurrency = uiState.selectedCurrency,
+                onCurrencySelected = onCurrencySelected,
+                onCurrencyLikeToggled = onCurrencyLikeToggled
+            )
+        }
+    }
+}
+
+@Composable
+private fun CurrenciesList(
+    modifier: Modifier = Modifier,
+    currencies: List<Currency>,
+    selectedCurrency: String?,
+    onCurrencySelected: (Currency) -> Unit,
+    onCurrencyLikeToggled: (Currency) -> Unit
+) {
+    LazyColumn(modifier = modifier) {
+        items(
+            currencies,
+            key = { currency -> currency.currencyCode }
+        ) { currency ->
+            CurrencySelectionListItem(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .animateItem(),
+                currency = currency,
+                isSelected = selectedCurrency == currency.currencyCode,
+                onSelected = { onCurrencySelected(currency) },
+                onFavoriteToggle = { onCurrencyLikeToggled(currency) })
         }
     }
 }
 
 @Preview
 @Composable
-fun CurrencySelectionScreenContentPreviewLight() {
+private fun CurrencySelectionScreenContentPreviewLight() {
     ExchangeRatesTheme {
         CurrencySelectionScreenContent(uiState = CurrencySelectionUiState(
             currencies = listOf(
@@ -145,7 +144,7 @@ fun CurrencySelectionScreenContentPreviewLight() {
             ),
             query = TextFieldValue(),
             showOnlyFavorites = false,
-            selectedCurrencies = null,
+            selectedCurrency = null,
             filteringErrorMessage = null,
             userSelectedCurrency = null
         ),
@@ -159,7 +158,7 @@ fun CurrencySelectionScreenContentPreviewLight() {
 
 @Preview
 @Composable
-fun CurrencySelectionScreenContentPreviewDark() {
+private fun CurrencySelectionScreenContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencySelectionScreenContent(uiState = CurrencySelectionUiState(
             currencies = listOf(
@@ -177,7 +176,7 @@ fun CurrencySelectionScreenContentPreviewDark() {
             ),
             query = TextFieldValue(),
             showOnlyFavorites = false,
-            selectedCurrencies = null,
+            selectedCurrency = null,
             filteringErrorMessage = null,
             userSelectedCurrency = null
         ),

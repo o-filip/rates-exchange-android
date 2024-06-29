@@ -29,27 +29,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             val connectionStatus =
                 mainViewModel.internetConnectionStatus.collectAsStateWithLifecycle(null).value
-            val darkTheme = themeViewModel.darkTheme.collectAsStateWithLifecycle(null).value
+            val isDarkTheme = themeViewModel.isDarkTheme.collectAsStateWithLifecycle(null).value
 
             ExchangeRatesTheme(
-                darkTheme = darkTheme ?: isSystemInDarkTheme()
+                darkTheme = isDarkTheme ?: isSystemInDarkTheme()
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
                     Column(Modifier.fillMaxSize()) {
-                        connectionStatus?.onSuccess {
+                        if (connectionStatus != null) {
                             AnimatedVisibility(
-                                visible = !it.isConnected
+                                visible = !connectionStatus.isConnected
                             ) {
-                                NoInternetConnectionStatusBar(connectionStatus = it)
+                                NoInternetConnectionStatusBar(connectionStatus = connectionStatus)
                             }
                         }
 
                         AppNavHost()
                     }
-
                 }
             }
         }

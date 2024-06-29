@@ -5,33 +5,33 @@ import kotlinx.coroutines.flow.Flow
 
 interface CurrencyRepository {
 
-    suspend fun prefetchCurrencies(): Result<Unit>
+    suspend fun prefetchCurrencies()
 
     fun getCurrencies(
         textQuery: String = "",
         onlyFavorites: Boolean = false
-    ): Flow<Result<List<Currency>>>
+    ): Flow<List<Currency>>
 
     suspend fun updateCurrencyFavoriteState(
         currency: Currency,
         favoriteState: Boolean
-    ): Result<Unit>
+    )
 
-    fun getCurrency(currencyCode: String): Flow<Result<Currency?>>
+    fun getCurrency(currencyCode: String): Flow<Currency?>
 
-    suspend fun areCurrenciesLoaded(): Result<Boolean>
+    suspend fun areCurrenciesLoaded(): Boolean
 
-    val overviewBaseCurrency: Flow<Result<String>>
+    val overviewBaseCurrency: Flow<String>
 
-    val conversionCurrencyFrom: Flow<Result<String>>
+    val conversionCurrencyFrom: Flow<String>
 
-    val conversionCurrencyTo: Flow<Result<String>>
+    val conversionCurrencyTo: Flow<String>
 
-    suspend fun setOverviewBaseCurrency(currencyCode: String): Result<Unit>
+    suspend fun setOverviewBaseCurrency(currencyCode: String)
 
-    suspend fun setConversionCurrencyFrom(currencyCode: String): Result<Unit>
+    suspend fun setConversionCurrencyFrom(currencyCode: String)
 
-    suspend fun setConversionCurrencyTo(currencyCode: String): Result<Unit>
+    suspend fun setConversionCurrencyTo(currencyCode: String)
 }
 
 

@@ -34,7 +34,7 @@ class GetInternetConnectionStatusUseCaseTest {
         }
         mockCurrencyRateRepository.stub {
             onBlocking { lastCurrencyRateLoadTimestampMs }.thenReturn(
-                flowOf(Result.success(lastDataLoadedTimestampMs))
+                flowOf(lastDataLoadedTimestampMs)
             )
         }
 
@@ -42,8 +42,8 @@ class GetInternetConnectionStatusUseCaseTest {
         val result = useCase.execute().first()
 
         // Then
-        assertEquals(isConnectedVal, result.getOrNull()?.isConnected)
-        assertEquals(lastDataLoadedTimestampMs, result.getOrNull()?.lastDataLoadedTimestampMs)
+        assertEquals(isConnectedVal, result.isConnected)
+        assertEquals(lastDataLoadedTimestampMs, result.lastDataLoadedTimestampMs)
     }
 }
 

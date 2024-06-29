@@ -1,17 +1,18 @@
-import java.util.Properties
-import com.android.builder.model.BuildType
 import com.android.build.gradle.internal.dsl.DefaultConfig
-
+import com.android.builder.model.BuildType
+import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("com.google.protobuf") version "0.9.1"
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
-    id("io.gitlab.arturbosch.detekt")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.protobuf)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.junit5)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 val getApkName: (BuildType, DefaultConfig) -> String = { buildType, defaultConfig ->
@@ -20,7 +21,7 @@ val getApkName: (BuildType, DefaultConfig) -> String = { buildType, defaultConfi
 }
 
 val localProps = Properties().apply {
-    load(project.rootProject.file("local.properties").inputStream())
+    load(project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream())
 }
 
 val signingProps: Properties? =
@@ -28,7 +29,7 @@ val signingProps: Properties? =
         Properties().apply { load(it.inputStream()) }
     }
 
-val STRING = "String"
+val string = "String"
 val CURRENCY_BEACON_API_KEY = "CURRENCY_BEACON_API_KEY"
 
 android {
@@ -39,8 +40,8 @@ android {
         applicationId = "com.ofilip.exchange_rates"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -51,7 +52,7 @@ android {
         if (currencyBeaconApiKey.isNullOrEmpty()) {
             throw GradleException("Currency Beacon API key is not set in local.properties, check readme.md (installation section) for more info.")
         } else {
-            buildConfigField(STRING, CURRENCY_BEACON_API_KEY, "$currencyBeaconApiKey")
+            buildConfigField(string, CURRENCY_BEACON_API_KEY, currencyBeaconApiKey)
         }
     }
 
@@ -140,65 +141,72 @@ android {
 }
 
 dependencies {
-    implementation(libs.coreKtx)
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleViewModelCompose)
-    implementation(libs.lifecycleRuntimeCompose)
-    implementation(libs.activityCompose)
-    implementation(libs.composeUi)
-    implementation(libs.composeMaterial)
-    implementation(libs.composeUiPreview)
-    implementation(libs.composeNavigation)
-    implementation(libs.roomKtx)
-    implementation(libs.roomRuntime)
+    implementation(libs.core.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    implementation(libs.compose.ui.preview)
+    implementation(libs.compose.navigation)
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
     implementation(libs.gson)
-    implementation(libs.hiltAndroid)
-    implementation(libs.hiltNavigation)
-    implementation(libs.hiltWork)
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.work)
     implementation(libs.coroutines)
     implementation(libs.timber)
-    implementation(libs.retrofitCore)
-    implementation(libs.retrofitConverterJackson)
-    implementation(libs.retrofitLogging)
-    implementation(libs.datastorePreferences)
-    implementation(libs.datastoreCore)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.jackson)
+    implementation(libs.retrofit.logging)
+    implementation(libs.datastore.preferences)
+    implementation(libs.datastore.core)
     implementation(libs.datastore)
     implementation(libs.protobuf)
-    implementation(libs.workRuntimeKtx)
-    implementation(libs.swipeRefresh)
-    implementation(libs.systemUiController)
-    implementation(libs.toolbarCompose)
-    implementation(libs.jodaTime)
-    implementation(libs.material3Android)
-    implementation(libs.flowLayout)
-    implementation(libs.vicoCompose)
-    implementation(libs.vicoCore)
-    implementation(libs.vicoViews)
-    implementation(libs.yCharts)
-    implementation(libs.composeShimmer)
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.swipe.refresh)
+    implementation(libs.system.ui.controller)
+    implementation(libs.toolbar.compose)
+    implementation(libs.joda.time)
+    implementation(libs.material3.android)
+    implementation(libs.flow.layout)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.core)
+    implementation(libs.vico.views)
+    implementation(libs.y.charts)
+    implementation(libs.compose.shimmer)
+    implementation(libs.kotlin.serialization.json)
+    implementation(libs.kotlin.stdlib)
 
-    testImplementation(libs.testUnit)
-    testImplementation(libs.testJunitJupiterApi)
-    testImplementation(libs.testJunitJupiterEngine)
-    testImplementation(libs.testJunitJupiterParams)
-    testImplementation(libs.testMockitoCore)
-    testImplementation(libs.testMockitoKotlin)
-    testImplementation(libs.testAndroidxCore)
-    testImplementation(libs.testWork)
-    testImplementation(libs.testCoroutinesTest)
-    testImplementation(libs.jodaTime)
+    // Test
+    testImplementation(libs.test.unit)
+    testImplementation(libs.test.junit.jupiter.api)
+    testImplementation(libs.test.junit.jupiter.engine)
+    testImplementation(libs.test.junit.jupiter.params)
+    testImplementation(libs.test.mockito.core)
+    testImplementation(libs.test.mockito.kotlin)
+    testImplementation(libs.test.androidx.core)
+    testImplementation(libs.test.work)
+    testImplementation(libs.test.coroutines.test)
+    testImplementation(libs.joda.time)
 
-    debugImplementation(libs.debugComposeUiTooling)
-    debugImplementation(libs.debugComposeUiManifest)
+    // Debug
+    debugImplementation(libs.debug.compose.ui.tooling)
+    debugImplementation(libs.debug.compose.ui.manifest)
 
-    kapt(libs.kaptRoomCompiler)
-    kapt(libs.kaptHiltDaggerCompiler)
-    kapt(libs.kaptHiltCompiler)
+    // Ksp
+    ksp(libs.ksp.room.compiler)
+
+    // Kapt
+    kapt(libs.kapt.hilt.dagger.compiler)
+    kapt(libs.kapt.hilt.compiler)
 }
 
 protobuf {
     protoc {
-        artifact = libs.protobufProtoc.get().toString()
+        artifact = libs.protobuf.protoc.get().toString()
     }
 
     generateProtoTasks {

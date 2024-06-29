@@ -10,7 +10,7 @@ interface ConvertCurrencyUseCase {
         amount: Double,
         fromCurrencyCode: String,
         toCurrencyCode: String
-    ): Result<Double?>
+    ): Double?
 }
 
 class ConvertCurrencyUseCaseImpl @Inject constructor(
@@ -21,15 +21,15 @@ class ConvertCurrencyUseCaseImpl @Inject constructor(
         amount: Double,
         fromCurrencyCode: String,
         toCurrencyCode: String
-    ): Result<Double?> =
-        getRatesOfAllCurrenciesUseCase.execute().first().map { rates ->
+    ): Double? =
+        getRatesOfAllCurrenciesUseCase.execute().first().let { rates ->
             val fromCurrencyRate = rates.find { currency -> currency.currency == fromCurrencyCode }
             val toCurrencyRate = rates.find { currency -> currency.currency == toCurrencyCode }
 
             if (fromCurrencyRate == null) {
-                return Result.failure(DomainError.CurrencyRateNotFound(fromCurrencyCode))
+                throw DomainError.CurrencyRateNotFound(fromCurrencyCode)
             } else if (toCurrencyRate == null) {
-                return Result.failure(DomainError.CurrencyRateNotFound(toCurrencyCode))
+                throw DomainError.CurrencyRateNotFound(toCurrencyCode)
             }
 
             applyConversionRateToAmountUseCase.execute(

@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import org.joda.time.DateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
@@ -38,7 +39,7 @@ class GetRatesTimeSeriesUseCaseImplTest {
                     baseCurrencyCode,
                     listOf(currencyCode)
                 )
-            } doReturn Result.success(mockRatesTimeSeries)
+            } doReturn mockRatesTimeSeries
         }
 
         // When
@@ -51,8 +52,8 @@ class GetRatesTimeSeriesUseCaseImplTest {
             baseCurrencyCode,
             listOf(currencyCode)
         )
-        assert(result.isSuccess)
-        assert(result.getOrNull() == mockRatesTimeSeries)
+
+        assertEquals(result, mockRatesTimeSeries)
     }
 
     @Test
@@ -62,7 +63,7 @@ class GetRatesTimeSeriesUseCaseImplTest {
         val endDate = DateTime.parse("2023-01-10")
         val baseCurrencyCode = "USD"
         val currencyCode = "EUR"
-        val exception = Exception("Failed to get rates time series")
+        val exception = RuntimeException("Failed to get rates time series")
 
         mockCurrencyRateRepository.stub {
             onBlocking {
@@ -72,11 +73,14 @@ class GetRatesTimeSeriesUseCaseImplTest {
                     baseCurrencyCode,
                     listOf(currencyCode)
                 )
-            } doReturn (Result.failure(exception))
+            }.thenThrow(exception)
         }
 
         // When
-        val result = useCase.execute(startDate, endDate, baseCurrencyCode, currencyCode)
+        val thrownException = assertThrows<RuntimeException> {
+            useCase.execute(startDate, endDate, baseCurrencyCode, currencyCode)
+        }
+
 
         // Then
         verify(mockCurrencyRateRepository).getRatesTimeSeries(
@@ -85,7 +89,6 @@ class GetRatesTimeSeriesUseCaseImplTest {
             baseCurrencyCode,
             listOf(currencyCode)
         )
-        assert(result.isFailure)
-        assertEquals(Result.failure<List<RatesTimeSeriesItem>>(exception), result)
+        assertEquals(exception, thrownException)
     }
 }

@@ -13,17 +13,6 @@ import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 
 
-@ExperimentalCoroutinesApi
-fun <T, R> Flow<Result<T>>.flatMapLatestResult(
-    transform: suspend (value: T) -> Flow<Result<R>>
-): Flow<Result<R>> =
-    transformLatest { result ->
-        result.onSuccess { value -> emitAll(transform(value)) }
-            .onFailure { error -> emit(Result.failure(error)) }
-    }
-
-fun <T> Flow<T>.toResultFlow(): Flow<Result<T>> = map { Result.success(it) }
-
 /**
  * Launches coroutine in given [scope] and collects the flow and emits data into given [collector]
  */

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.stub
 
@@ -15,13 +16,11 @@ class ConvertCurrencyUseCaseTest {
     private val mockConversionResult = 72.0
 
     private val mockRatesFlow = flowOf(
-        Result.success(
-            listOf(
-                CurrencyRate("USD", 1.0),
-                CurrencyRate("EUR", 0.85),
-                CurrencyRate("GBP", 0.72),
-                CurrencyRate("NONE", null),
-            )
+        listOf(
+            CurrencyRate("USD", 1.0),
+            CurrencyRate("EUR", 0.85),
+            CurrencyRate("GBP", 0.72),
+            CurrencyRate("NONE", null),
         )
     )
 
@@ -60,11 +59,13 @@ class ConvertCurrencyUseCaseTest {
             val fromCurrencyCode = "CAD"
             val toCurrencyCode = "USD"
 
-            val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
+            val thrownException = assertThrows<DomainError.CurrencyRateNotFound> {
+                useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
+            }
 
             assertEquals(
-                Result.failure<Double?>(DomainError.CurrencyRateNotFound(fromCurrencyCode)),
-                result
+                DomainError.CurrencyRateNotFound(fromCurrencyCode),
+                thrownException
             )
         }
 
@@ -75,9 +76,14 @@ class ConvertCurrencyUseCaseTest {
             val fromCurrencyCode = "USD"
             val toCurrencyCode = "CAD"
 
-            val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
+            val thrownException = assertThrows<DomainError.CurrencyRateNotFound> {
+                useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
+            }
 
-            assertEquals(Result.failure<Double?>(DomainError.CurrencyRateNotFound(toCurrencyCode)), result)
+            assertEquals(
+                DomainError.CurrencyRateNotFound(toCurrencyCode),
+                thrownException
+            )
         }
 
     @Test
@@ -89,7 +95,7 @@ class ConvertCurrencyUseCaseTest {
 
             val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
 
-            assertEquals(Result.success(null), result)
+            assertEquals(null, result)
         }
 
 
@@ -102,17 +108,8 @@ class ConvertCurrencyUseCaseTest {
 
             val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
 
-            assertEquals(Result.success(mockConversionResult), result)
+            assertEquals(mockConversionResult, result)
         }
     }
 
 }
-
-
-//
-
-
-
-
-
-

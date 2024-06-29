@@ -25,7 +25,7 @@ class BaseRepositoryTest {
 
         // Then
         result.collect { value ->
-            assertEquals(Result.success("Local Data"), value)
+            assertEquals("Local Data", value)
         }
     }
 
@@ -47,7 +47,7 @@ class BaseRepositoryTest {
 
         // Then
         result.collect { value ->
-            assertEquals(Result.success("Local Data"), value)
+            assertEquals("Local Data", value)
         }
     }
 }

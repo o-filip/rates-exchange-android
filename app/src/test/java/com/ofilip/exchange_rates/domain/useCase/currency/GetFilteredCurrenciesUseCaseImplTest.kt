@@ -3,13 +3,13 @@ package com.ofilip.exchange_rates.domain.useCase.currency
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.fixtures.Fixtures
-import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.stub
@@ -34,7 +34,7 @@ class GetFilteredCurrenciesUseCaseImplTest {
             mockCurrencyRepository.stub {
                 onBlocking {
                     getCurrencies(any(), any())
-                }.thenReturn(currencies.toFlowOfSuccess())
+                }.thenReturn(flowOf(currencies))
             }
 
             // When
@@ -42,7 +42,7 @@ class GetFilteredCurrenciesUseCaseImplTest {
 
             // Then
             verify(mockCurrencyRepository).getCurrencies(query, onlyFavorites)
-            assertEquals(Result.success(currencies), result.last())
+            assertEquals(currencies, result.last())
         }
 
     @Test
@@ -51,18 +51,18 @@ class GetFilteredCurrenciesUseCaseImplTest {
             // Given
             val query = "EUR"
             val onlyFavorites = false
-            val exception = Exception("Failed to retrieve currencies")
+            val exception = RuntimeException("Failed to retrieve currencies")
             mockCurrencyRepository.stub {
-                onBlocking { getCurrencies(any(), any()) }.thenReturn(
-                    flowOf(Result.failure(exception))
-                )
+                onBlocking { getCurrencies(any(), any()) }.thenThrow(exception)
             }
 
             // When
-            val result = useCase.execute(query, onlyFavorites).first()
+            val thrownException = assertThrows<RuntimeException> {
+                useCase.execute(query, onlyFavorites).toList()
+            }
 
             // Then
             verify(mockCurrencyRepository).getCurrencies(query, onlyFavorites)
-            assertEquals(Result.failure<List<Currency>>(exception), result)
+            assertEquals(exception, thrownException)
         }
 }

@@ -5,14 +5,15 @@ import com.ofilip.exchange_rates.core.error.DataError
 import com.ofilip.exchange_rates.data.remote.retrofit.ResponseWrapper
 import java.io.IOException
 import java.net.SocketTimeoutException
+import kotlin.coroutines.cancellation.CancellationException
 import retrofit2.Response
 import timber.log.Timber
 
 interface BaseRetrofitDataStore {
-    private fun convertError(error: Exception): DataError {
+    private fun convertError(error: Exception): Exception {
         Timber.e(error, "Converting retrofit error")
         return when (error) {
-            is DataError -> error
+            is DataError, is CancellationException -> error
             is ValueInstantiationException -> DataError.InvalidOutputFormat(
                 error.message
             )

@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 /**
  * Worker prefetching currency list form webservice and storing it into database
@@ -19,10 +20,17 @@ class CurrencyListUpdateWorker @AssistedInject constructor(
     private val currencyRepository: CurrencyRepository
 ) : CoroutineWorker(appContext, workerParams) {
 
+    companion object {
+        const val TAG = "CurrencyListUpdateWorker"
+    }
+
     override suspend fun doWork(): Result {
-        return currencyRepository.prefetchCurrencies().let { result ->
-            if (result.isSuccess) Result.success()
-            else Result.failure()
+        try {
+            currencyRepository.prefetchCurrencies()
+            return Result.success()
+        } catch (e: Exception) {
+            Timber.tag(TAG).e(e)
+            return Result.failure()
         }
     }
 }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
  * or by the favorite status
  */
 interface GetFilteredCurrenciesUseCase {
-    suspend fun execute(query: String, onlyFavorites: Boolean): Flow<Result<List<Currency>>>
+    suspend fun execute(query: String, onlyFavorites: Boolean): Flow<List<Currency>>
 }
 
 class GetFilteredCurrenciesUseCaseImpl @Inject constructor(
@@ -19,6 +19,6 @@ class GetFilteredCurrenciesUseCaseImpl @Inject constructor(
     override suspend fun execute(
         query: String,
         onlyFavorites: Boolean
-    ): Flow<Result<List<Currency>>> =
+    ): Flow<List<Currency>> =
         currencyRepository.getCurrencies(textQuery = query, onlyFavorites = onlyFavorites)
 }

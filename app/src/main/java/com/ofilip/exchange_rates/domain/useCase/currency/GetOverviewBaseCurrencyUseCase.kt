@@ -5,11 +5,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 interface GetOverviewBaseCurrencyUseCase {
-    fun execute(): Flow<Result<String>>
+    fun execute(): Flow<String>
 }
 
 class GetOverviewBaseCurrencyUseCaseImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : GetOverviewBaseCurrencyUseCase {
-    override fun execute(): Flow<Result<String>> = currencyRepository.overviewBaseCurrency
+    override fun execute(): Flow<String> = currencyRepository.overviewBaseCurrency
 }

@@ -4,12 +4,12 @@ import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.data.repository.CurrencyRateRepository
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.fixtures.Fixtures
-import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.stub
@@ -30,16 +30,16 @@ class GetBaseRatesOfAllCurrenciesUseCaseImplTest {
     fun `execute should return empty list of currency rates if there are no currencies`() =
         runBlocking {
             mockCurrencyRepository.stub {
-                onBlocking { getCurrencies() }.thenReturn(flowOf(Result.success(emptyList())))
+                onBlocking { getCurrencies() }.thenReturn(flowOf(emptyList()))
             }
             mockCurrencyRateRepository.stub {
-                onBlocking { getRates(any()) }.thenReturn(flowOf(Result.success(emptyList())))
+                onBlocking { getRates(any()) }.thenReturn(flowOf(emptyList()))
             }
             val result = useCase.execute().first()
 
             verify(mockCurrencyRepository).getCurrencies()
             verify(mockCurrencyRateRepository).getRates(emptyList())
-            assertEquals(Result.success(emptyList<List<CurrencyRate>>()), result)
+            assertEquals(emptyList<List<CurrencyRate>>(), result)
         }
 
 
@@ -50,47 +50,53 @@ class GetBaseRatesOfAllCurrenciesUseCaseImplTest {
         val currencyCodes = Fixtures.currencyCodes
 
         mockCurrencyRepository.stub {
-            onBlocking { getCurrencies() }.thenReturn(currencies.toFlowOfSuccess())
+            onBlocking { getCurrencies() }.thenReturn(flowOf(currencies))
         }
         mockCurrencyRateRepository.stub {
-            onBlocking { getRates(any()) }.thenReturn(localRates.toFlowOfSuccess())
+            onBlocking { getRates(any()) }.thenReturn(flowOf(localRates))
         }
         val result = useCase.execute().first()
 
         verify(mockCurrencyRepository).getCurrencies()
         verify(mockCurrencyRateRepository).getRates(currencyCodes)
-        assertEquals(Result.success(localRates), result)
+        assertEquals(localRates, result)
     }
 
     @Test
     fun `execute should return failure when getCurrencies fails`() = runBlocking {
-        val exception = Exception("Failed to get currencies")
+        val exception = RuntimeException("Failed to get currencies")
         mockCurrencyRepository.stub {
-            onBlocking { getCurrencies() }.thenReturn(flowOf(Result.failure(exception)))
+            onBlocking { getCurrencies() }.thenThrow(exception)
         }
 
-        val result = useCase.execute().first()
+        val thrownException = assertThrows<RuntimeException> {
+            useCase.execute().first()
+        }
 
         verify(mockCurrencyRepository).getCurrencies()
-        assertEquals(Result.failure<List<CurrencyRate>>(exception), result)
+        assertEquals(exception, thrownException)
     }
 
     @Test
     fun `execute should return failure when getRates fails`() = runBlocking {
-        val exception = Exception("Failed to get currency rates")
+        val exception = RuntimeException("Failed to get currency rates")
         val currencies = Fixtures.currencies
         val currencyCodes = Fixtures.currencyCodes
         mockCurrencyRepository.stub {
-            onBlocking { getCurrencies() }.thenReturn(currencies.toFlowOfSuccess())
+            onBlocking { getCurrencies() }.thenReturn(flowOf(currencies))
         }
         mockCurrencyRateRepository.stub {
-            onBlocking { getRates(any()) }.thenReturn(flowOf(Result.failure(exception)))
+            onBlocking { getRates(any()) }.thenThrow(exception)
         }
-        val result = useCase.execute().first()
+
+        val thrownException = assertThrows<Exception> {
+            useCase.execute().first()
+        }
+
 
         verify(mockCurrencyRepository).getCurrencies()
         verify(mockCurrencyRateRepository).getRates(currencyCodes)
-        assertEquals(Result.failure<List<CurrencyRate>>(exception), result)
+        assertEquals(exception.message, thrownException.message)
     }
 
 }

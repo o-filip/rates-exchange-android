@@ -10,8 +10,11 @@ import com.ofilip.exchange_rates.domain.useCase.rate.GetRatesForOverviewUseCase
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 data class CurrencyRatesUiState(
@@ -33,57 +36,66 @@ class CurrencyRatesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CurrencyRatesUiState())
     val uiState: StateFlow<CurrencyRatesUiState> get() = _uiState
 
-    private var isInitialized = false
+    private var loadRatesJob: Job? = null
+    private var loadBaseCurrencyJob: Job? = null
 
-    fun init() {
-        if (isInitialized) return
-        isInitialized = true
-
+    init {
         loadRates()
+        loadBaseCurrency()
+    }
 
-        getOverviewBaseCurrencyUseCase.execute().collectIn(viewModelScope) { currency ->
-            currency.onSuccess {
-                _uiState.value = uiState.value.copy(
-                    overviewCurrency = it
-                )
-            }.onFailure {
+    private fun loadBaseCurrency() {
+        loadBaseCurrencyJob?.cancel()
+        loadBaseCurrencyJob = getOverviewBaseCurrencyUseCase.execute()
+            .catch {
                 _uiState.value = uiState.value.copy(
                     baseCurrencyErrorMessage = uiErrorConverter.convertToText(it),
                 )
             }
-        }
+            .collectIn(viewModelScope) { currency ->
+                _uiState.value = uiState.value.copy(
+                    overviewCurrency = currency
+                )
+            }
     }
 
     private fun loadRates() {
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(
-                ratesLoading = true,
-                ratesLoadErrorMessage = null,
-                baseCurrencyErrorMessage = null,
-            )
-
-            getOverviewRatesUseCase.execute().collect { result ->
-                result.onSuccess { rates ->
-                    _uiState.value = uiState.value.copy(
-                        rates = rates,
-                        ratesLoading = false
-                    )
-                }.onFailure {
-                    _uiState.value = uiState.value.copy(
-                        ratesLoading = false,
-                        ratesLoadErrorMessage = uiErrorConverter.convertToText(it)
-                    )
-                }
+        _uiState.value = uiState.value.copy(
+            ratesLoading = true,
+            ratesLoadErrorMessage = null,
+            baseCurrencyErrorMessage = null,
+        )
+        loadRatesJob?.cancel()
+        loadRatesJob = getOverviewRatesUseCase.execute()
+            .catch {
+                _uiState.value = uiState.value.copy(
+                    ratesLoading = false,
+                    ratesLoadErrorMessage = uiErrorConverter.convertToText(it)
+                )
             }
-        }
+            .collectIn(viewModelScope) { rates ->
+                _uiState.value = uiState.value.copy(
+                    rates = rates,
+                    ratesLoading = false
+                )
+            }
     }
 
     fun refreshData() {
         loadRates()
+        loadBaseCurrency()
     }
 
     fun onBaseCurrencySelected(currencyCode: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            _uiState.value = _uiState.value.copy(
+                baseCurrencyErrorMessage = uiErrorConverter.convertToText(throwable)
+            )
+        }) {
+            _uiState.value = _uiState.value.copy(
+                baseCurrencyErrorMessage = null
+            )
+            // UI updated via loadBaseCurrency
             setOverviewBaseCurrencyUseCase.execute(currencyCode)
         }
     }

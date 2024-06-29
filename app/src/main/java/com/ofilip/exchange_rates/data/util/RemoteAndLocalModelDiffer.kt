@@ -38,39 +38,46 @@ class RemoteAndLocalModelDiffer<LocalType, RemoteType>(
      * Generates list of data that is in [remoteItems] but not in [localItems] and
      * should be inserted into local data store
      */
-    fun itemsToInsert(): List<LocalType> = remoteItems.mapNotNull { remoteItem ->
-        localItems.find { localItem -> areItemsSame(localItem, remoteItem) }
-            .let {
-                if (it == null) createLocalItem(remoteItem)
-                else null
-            }
+    val itemsToInsert: List<LocalType> by lazy {
+        remoteItems.mapNotNull { remoteItem ->
+            localItems.find { localItem -> areItemsSame(localItem, remoteItem) }
+                .let {
+                    if (it == null) createLocalItem(remoteItem)
+                    else null
+                }
+        }
     }
 
     /**
      * Generates list of data that is in both [remoteItems] and [localItems] and should be updated
      * in local storage
      */
-    fun itemsToUpdate(): List<LocalType> = remoteItems.mapNotNull { remoteItem ->
-        localItems.find { localItem -> areItemsSame(localItem, remoteItem) }
-            .let {
-                if (it != null) updateLocalItem(it, remoteItem)
-                else null
-            }
+    val itemsToUpdate: List<LocalType> by lazy {
+        remoteItems.mapNotNull { remoteItem ->
+            localItems.find { localItem -> areItemsSame(localItem, remoteItem) }
+                .let {
+                    if (it != null) updateLocalItem(it, remoteItem)
+                    else null
+                }
+        }
     }
 
     /**
      * Generates list of data that is in  [localItems] but not in  [remoteItems] and should be deleted
      * from local storage
      */
-    fun itemsToDelete(): List<LocalType> = localItems.filter {
-        remoteItems.find { remoteItem ->
-            areItemsSame(it, remoteItem)
-        } == null
+    val itemsToDelete: List<LocalType> by lazy {
+        localItems.filter {
+            remoteItems.find { remoteItem ->
+                areItemsSame(it, remoteItem)
+            } == null
+        }
     }
 
     /**
      * Generates data that should be updated or inserted into local data store
      */
-    fun itemsToUpdateOrInsert(): List<LocalType> =
-        itemsToInsert().toMutableList().apply { addAll(itemsToUpdate()) }
+    val itemsToUpdateOrInsert: List<LocalType> by lazy {
+        itemsToInsert.toMutableList().apply { addAll(itemsToUpdate) }
+    }
 }

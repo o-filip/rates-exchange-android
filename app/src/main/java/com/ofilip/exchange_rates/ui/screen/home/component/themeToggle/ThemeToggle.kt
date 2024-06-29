@@ -22,7 +22,7 @@ fun ThemeToggleSection(
     themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
     val darkTheme =
-        themeViewModel.darkTheme.collectAsStateWithLifecycle(null).value ?: isSystemInDarkTheme()
+        themeViewModel.isDarkTheme.collectAsStateWithLifecycle(null).value ?: isSystemInDarkTheme()
 
     ThemeToggleSectionContent(
         modifier = modifier,

@@ -14,7 +14,7 @@ interface GetRatesTimeSeriesUseCase {
         endDate: DateTime,
         baseCurrencyCode: String,
         currencyCode: String
-    ): Result<List<RatesTimeSeriesItem>>
+    ): List<RatesTimeSeriesItem>
 }
 
 class GetRatesTimeSeriesUseCaseImpl @Inject constructor(
@@ -25,7 +25,7 @@ class GetRatesTimeSeriesUseCaseImpl @Inject constructor(
         endDate: DateTime,
         baseCurrencyCode: String,
         currencyCode: String
-    ): Result<List<RatesTimeSeriesItem>> =
+    ): List<RatesTimeSeriesItem> =
         currencyRateRepository.getRatesTimeSeries(
             startDate,
             endDate,

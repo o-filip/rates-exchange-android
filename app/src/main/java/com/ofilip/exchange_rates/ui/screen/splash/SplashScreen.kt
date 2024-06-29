@@ -21,11 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertLarge
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
-import com.ofilip.exchange_rates.ui.navigation.DefaultDest
-import com.ofilip.exchange_rates.ui.navigation.Dest
 import com.ofilip.exchange_rates.ui.theme.ExchangeRatesTheme
 
-object SplashScreenDest : Dest by DefaultDest("splash")
 
 @Composable
 fun SplashScreen(
@@ -41,14 +38,10 @@ fun SplashScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.initApp()
-    }
-
     SplashScreenContent(
         modifier = modifier,
         uiState = uiState,
-        onRetry = viewModel::initApp
+        onRetry = viewModel::retry
     )
 }
 
@@ -89,7 +82,7 @@ fun SplashScreenContent(
 
 @Preview
 @Composable
-fun SplashScreenPreviewLight() {
+private fun SplashScreenPreviewLight() {
     ExchangeRatesTheme {
         SplashScreenContent(
             uiState = SplashUiState(
@@ -104,7 +97,7 @@ fun SplashScreenPreviewLight() {
 
 @Preview
 @Composable
-fun SplashScreenPreviewDark() {
+private fun SplashScreenPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         SplashScreenContent(
             uiState = SplashUiState(

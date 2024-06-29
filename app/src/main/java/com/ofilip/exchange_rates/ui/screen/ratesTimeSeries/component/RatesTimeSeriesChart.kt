@@ -38,7 +38,7 @@ import com.ofilip.exchange_rates.ui.util.Dimens
 import com.ofilip.exchange_rates.ui.util.formatShotDateWithOffset
 import com.valentinilk.shimmer.shimmer
 
-private data class Model(
+private data class StateWrapper(
     val isLoading: Boolean,
     val chartData: ChartDataModel?,
     val errorMessage: String?
@@ -59,13 +59,13 @@ fun RatesTimeSeriesChart(
             .screenHorizontalPadding()
     ) {
         AnimatedContent(
-            targetState = Model(isLoading, data, errorMessage),
+            targetState = StateWrapper(isLoading, data, errorMessage),
             label = "RatesTimeSeriesChartContent",
             contentKey = {
                 when {
-                    isLoading && data == null -> "InitialLoading"
-                    errorMessage != null -> "ErrorMessage"
-                    data != null -> if (data.hasUnchangedRate) "UnchangedRateMessage" else "LineChart"
+                    it.isLoading && it.chartData == null -> "InitialLoading"
+                    it.errorMessage != null -> "ErrorMessage"
+                    it.chartData != null -> if (it.chartData.hasUnchangedRate) "UnchangedRateMessage" else "LineChart"
                     else -> "InitialLoading"
                 }
             }) {

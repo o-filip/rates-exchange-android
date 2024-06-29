@@ -63,7 +63,7 @@ fun CurrencyFilterSection(
 
 @Preview
 @Composable
-fun CurrencyFilterSectionPreviewLight() {
+private fun CurrencyFilterSectionPreviewLight() {
     ExchangeRatesTheme {
         CurrencyFilterSection(
             textQuery = TextFieldValue(""),
@@ -77,7 +77,7 @@ fun CurrencyFilterSectionPreviewLight() {
 
 @Preview(showBackground = true)
 @Composable
-fun CurrencyFilterSectionPreviewDark() {
+private fun CurrencyFilterSectionPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencyFilterSection(
             textQuery = TextFieldValue(""),

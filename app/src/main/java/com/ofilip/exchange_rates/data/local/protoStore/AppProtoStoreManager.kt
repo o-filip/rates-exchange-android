@@ -4,16 +4,21 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import com.ofilip.exchange_rates.AppProtoStore
+import com.ofilip.exchange_rates.core.di.AppDispatchers
 
 import com.ofilip.exchange_rates.core.di.BaseRatesCurrency
 import com.ofilip.exchange_rates.core.di.DefaultConversionFromCurrency
 import com.ofilip.exchange_rates.core.di.DefaultConversionToCurrency
+import com.ofilip.exchange_rates.core.di.Dispatcher
 import com.ofilip.exchange_rates.core.extensions.filterUnchanged
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 val Context.settingsDataStore: DataStore<AppProtoStore> by dataStore(
     fileName = "app_proto_store.pb",
@@ -33,6 +38,7 @@ class AppProtoStoreManager @Inject constructor(
     private val defaultConversionFromCurrency: String,
     @DefaultConversionToCurrency
     private val defaultConversionToCurrency: String,
+    @Dispatcher(AppDispatchers.IO) private val dispatcher: CoroutineDispatcher
 ) {
     private val store = context.settingsDataStore
 
@@ -45,23 +51,27 @@ class AppProtoStoreManager @Inject constructor(
         if (it.hasOverviewBaseCurrency()) it.overviewBaseCurrency
         else baseRatesCurrency
     }.filterUnchanged()
+        .flowOn(dispatcher)
 
     val conversionCurrencyFrom: Flow<String> = appProtoStore.map {
         if (it.hasConversionCurrencyFrom()) it.conversionCurrencyFrom
         else defaultConversionFromCurrency
     }.filterUnchanged()
+        .flowOn(dispatcher)
 
     val conversionCurrencyTo: Flow<String> = appProtoStore.map {
         if (it.hasConversionCurrencyTo()) it.conversionCurrencyTo
         else defaultConversionToCurrency
     }.filterUnchanged()
+        .flowOn(dispatcher)
 
     val darkTheme: Flow<Boolean?> = appProtoStore.map {
         if (it.hasDarkTheme()) it.darkTheme
         else null
     }.filterUnchanged()
+        .flowOn(dispatcher)
 
-    suspend fun setLastRatesLoadTimestampMs(timestamp: Long) {
+    suspend fun setLastRatesLoadTimestampMs(timestamp: Long) = withContext(dispatcher) {
         store.updateData {
             it.toBuilder()
                 .setLastRatesLoadTimestampMs(timestamp)
@@ -69,7 +79,7 @@ class AppProtoStoreManager @Inject constructor(
         }
     }
 
-    suspend fun setOverviewBaseCurrency(currencyCode: String) {
+    suspend fun setOverviewBaseCurrency(currencyCode: String) = withContext(dispatcher) {
         store.updateData {
             it.toBuilder()
                 .setOverviewBaseCurrency(currencyCode)
@@ -77,7 +87,7 @@ class AppProtoStoreManager @Inject constructor(
         }
     }
 
-    suspend fun setConversionCurrencyFrom(currencyCode: String) {
+    suspend fun setConversionCurrencyFrom(currencyCode: String) = withContext(dispatcher) {
         store.updateData {
             it.toBuilder()
                 .setConversionCurrencyFrom(currencyCode)
@@ -85,7 +95,7 @@ class AppProtoStoreManager @Inject constructor(
         }
     }
 
-    suspend fun setConversionCurrencyTo(currencyCode: String) {
+    suspend fun setConversionCurrencyTo(currencyCode: String) = withContext(dispatcher) {
         store.updateData {
             it.toBuilder()
                 .setConversionCurrencyTo(currencyCode)
@@ -93,7 +103,7 @@ class AppProtoStoreManager @Inject constructor(
         }
     }
 
-    suspend fun setDarkTheme(darkTheme: Boolean) {
+    suspend fun setDarkTheme(darkTheme: Boolean) = withContext(dispatcher) {
         store.updateData {
             it.toBuilder()
                 .setDarkTheme(darkTheme)

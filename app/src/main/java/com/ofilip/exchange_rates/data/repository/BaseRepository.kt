@@ -2,24 +2,23 @@ package com.ofilip.exchange_rates.data.repository
 
 
 import com.ofilip.exchange_rates.core.error.DataError
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 
 abstract class BaseRepository {
 
     private fun convertError(error: Throwable): Throwable =
-        if (error !is DataError) {
+        if (error is CancellationException || error is DataError) {
+            error
+        } else {
             Timber.e(error, "Repository error")
             DataError.Unknown(cause = error)
-        } else {
-            error
         }
-
 
     /**
      * Fetches data from remote (usually web service), store them in local data store
@@ -51,18 +50,18 @@ abstract class BaseRepository {
          * Called after data was successfully fetched from remote and stored into local data store
          */
         onSuccessfulRemoteFetch: suspend () -> Unit = {},
-    ): Flow<Result<LocalType>> = flow {
+    ): Flow<LocalType> = flow {
         if (!shouldFetchFromRemote()) {
-            emitAll(fetchFromLocal().map { Result.success(it) })
+            emitAll(fetchFromLocal())
         } else {
             val remoteResponse = fetchFromRemote()
 
             store(remoteResponse)
             onSuccessfulRemoteFetch()
-            emitAll(fetchFromLocal().map { Result.success(it) })
+            emitAll(fetchFromLocal())
         }
     }.catch {
-        emit(Result.failure(convertError(it)))
+        throw convertError(it)
     }
 
     fun <T> repoFetch(
@@ -75,27 +74,27 @@ abstract class BaseRepository {
 
     suspend fun <T> repoFetchSuspend(
         call: suspend () -> T
-    ): Result<T> = try {
-        Result.success(call())
+    ): T = try {
+        call()
     } catch (ex: Exception) {
-        Result.failure(convertError(ex))
+        throw convertError(ex)
     }
 
 
     suspend fun <T> repoDo(
         call: suspend () -> T
-    ): Result<T> = try {
-        Result.success(call())
+    ): T = try {
+        call()
     } catch (ex: Exception) {
-        Result.failure(convertError(ex))
+        throw convertError(ex)
     }
 
-    suspend fun repoDoNoResult(
+    suspend fun repoDoWithoutResult(
         call: suspend () -> Unit
-    ): Result<Unit> = try {
-        Result.success(call())
+    ): Unit = try {
+        call()
     } catch (ex: Exception) {
-        Result.failure(convertError(ex))
+        throw convertError(ex)
     }
 
 }

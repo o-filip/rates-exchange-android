@@ -31,7 +31,7 @@ class UserPreferencesRepositoryImplTest {
             onBlocking { darkTheme } doReturn flowOf(darkThemeValue)
         }
 
-        val result = userPreferencesRepository.darkTheme.first()
+        val result = userPreferencesRepository.isDarkTheme.first()
 
         verify(appProtoStore).darkTheme
         assertEquals(darkThemeValue, result)
@@ -41,7 +41,7 @@ class UserPreferencesRepositoryImplTest {
     fun `setDarkTheme should call appProtoStore setDarkTheme`() = runBlocking {
         val darkThemeValue = true
 
-        userPreferencesRepository.setDarkTheme(darkThemeValue)
+        userPreferencesRepository.setIsDarkTheme(darkThemeValue)
 
         verify(appProtoStore).setDarkTheme(darkThemeValue)
     }

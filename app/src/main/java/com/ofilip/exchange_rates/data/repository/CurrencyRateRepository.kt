@@ -8,15 +8,15 @@ import kotlinx.coroutines.flow.Flow
 import org.joda.time.DateTime
 
 interface CurrencyRateRepository {
-    val lastCurrencyRateLoadTimestampMs: Flow<Result<Long>>
+    val lastCurrencyRateLoadTimestampMs: Flow<Long>
 
-    fun getRates(currencyCodes: List<String>): Flow<Result<List<CurrencyRate>>>
+    fun getRates(currencyCodes: List<String>): Flow<List<CurrencyRate>>
 
     suspend fun getRatesTimeSeries(
         startDate: DateTime,
         endDate: DateTime,
         baseCurrencyCode: String,
         currencyCodes: List<String>
-    ): Result<List<RatesTimeSeriesItem>>
+    ): List<RatesTimeSeriesItem>
 }
 

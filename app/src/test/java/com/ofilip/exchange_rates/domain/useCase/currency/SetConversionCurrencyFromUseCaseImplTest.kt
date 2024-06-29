@@ -2,7 +2,9 @@ package com.ofilip.exchange_rates.domain.useCase.currency
 
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
@@ -23,7 +25,7 @@ class SetConversionCurrencyFromUseCaseImplTest {
                 setConversionCurrencyFrom(
                     conversionCurrency
                 )
-            } doReturn (Result.success(Unit))
+            } doReturn (Unit)
         }
 
         // When
@@ -31,27 +33,30 @@ class SetConversionCurrencyFromUseCaseImplTest {
 
         // Then
         verify(mockCurrencyRepository).setConversionCurrencyFrom(conversionCurrency)
-        assert(result.isSuccess)
+        assertEquals(Unit, result)
     }
 
     @Test
-    fun `execute should return failure when currency repository returns error result`() = runBlocking {
-        // Given
-        val conversionCurrency = "USD"
-        val exception = Exception("Failed to set conversion currency from")
-        mockCurrencyRepository.stub {
-            onBlocking {
-                setConversionCurrencyFrom(
-                    conversionCurrency
-                )
-            } doReturn (Result.failure(exception))
+    fun `execute should return failure when currency repository returns error result`() =
+        runBlocking {
+            // Given
+            val conversionCurrency = "USD"
+            val exception = RuntimeException("Failed to set conversion currency from")
+            mockCurrencyRepository.stub {
+                onBlocking {
+                    setConversionCurrencyFrom(
+                        conversionCurrency
+                    )
+                }.thenThrow(exception)
+            }
+
+            // When
+            val thrownException = assertThrows<RuntimeException> {
+                useCase.execute(conversionCurrency)
+            }
+
+            // Then
+            verify(mockCurrencyRepository).setConversionCurrencyFrom(conversionCurrency)
+            assertEquals(exception, thrownException)
         }
-
-        // When
-        val result = useCase.execute(conversionCurrency)
-
-        // Then
-        verify(mockCurrencyRepository).setConversionCurrencyFrom(conversionCurrency)
-        assert(result.isFailure)
-    }
 }

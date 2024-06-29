@@ -36,7 +36,7 @@ fun RatesTimeSeriesFilter(
     onDateRangeChanged: (RatesTimeSeriesDateRange) -> Unit,
     onCurrencyChange: (String) -> Unit,
     onNavigateToCurrencySelection: (
-        preselectedCurrencies: List<String>?, resultCallback: (String?) -> Unit
+        preselectedCurrency: String?, resultCallback: (String?) -> Unit
     ) -> Unit,
 ) {
     Card(
@@ -70,7 +70,7 @@ fun RatesTimeSeriesFilterContent(
     onBaseCurrencyChange: (String) -> Unit,
     onCurrencyChange: (String) -> Unit,
     onNavigateToCurrencySelection: (
-        preselectedCurrencies: List<String>?, resultCallback: (String?) -> Unit
+        preselectedCurrency: String?, resultCallback: (String?) -> Unit
     ) -> Unit,
 ) {
     Column(modifier = modifier) {
@@ -96,7 +96,7 @@ fun RatesTimeSeriesFilterContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun RatesTimeSeriesDateRangeSelection(
+private fun RatesTimeSeriesDateRangeSelection(
     modifier: Modifier = Modifier,
     dateRange: RatesTimeSeriesDateRange,
     onDateChanged: (RatesTimeSeriesDateRange) -> Unit,
@@ -156,14 +156,14 @@ fun RatesTimeSeriesDateRangeSelection(
 }
 
 @Composable
-fun RatesTimeSeriesFilterCurrenciesSection(
+private fun RatesTimeSeriesFilterCurrenciesSection(
     modifier: Modifier = Modifier,
     baseCurrency: String,
     currency: String,
     onBaseCurrencyChange: (String) -> Unit,
     onCurrencyChange: (String) -> Unit,
     onNavigateToCurrencySelection: (
-        preselectedCurrencies: List<String>?, resultCallback: (String?) -> Unit
+        preselectedCurrency: String?, resultCallback: (String?) -> Unit
     ) -> Unit,
 ) {
     Column(
@@ -177,9 +177,7 @@ fun RatesTimeSeriesFilterCurrenciesSection(
 
         CurrencySelectionButton(
             onClick = {
-                onNavigateToCurrencySelection(
-                    listOf(baseCurrency)
-                ) { result ->
+                onNavigateToCurrencySelection(baseCurrency) { result ->
                     result?.let { onBaseCurrencyChange(it) }
                 }
             },
@@ -189,9 +187,7 @@ fun RatesTimeSeriesFilterCurrenciesSection(
 
         CurrencySelectionButton(
             onClick = {
-                onNavigateToCurrencySelection(
-                    listOf(currency)
-                ) { result ->
+                onNavigateToCurrencySelection(currency) { result ->
                     result?.let { onCurrencyChange(it) }
                 }
             },

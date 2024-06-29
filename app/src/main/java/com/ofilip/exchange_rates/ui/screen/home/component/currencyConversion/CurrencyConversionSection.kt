@@ -151,7 +151,7 @@ private fun ConversionFromFields(
 
 @Preview
 @Composable
-fun CurrencyConversionSectionContentPreviewLight() {
+private fun CurrencyConversionSectionContentPreviewLight() {
     ExchangeRatesTheme {
         CurrencyConversionSectionContent(
             uiState = CurrencyConversionUiState(
@@ -174,7 +174,7 @@ fun CurrencyConversionSectionContentPreviewLight() {
 
 @Preview
 @Composable
-fun CurrencyConversionSectionContentPreviewDark() {
+private fun CurrencyConversionSectionContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencyConversionSectionContent(
             uiState = CurrencyConversionUiState(
