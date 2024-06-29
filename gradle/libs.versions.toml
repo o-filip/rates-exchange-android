@@ -1,127 +1,125 @@
 [versions]
-coreKtx = '1.13.1'
-lifecycleRuntimeKtx = '2.8.2'
-activityCompose = '1.9.0'
-compose = '1.6.8'
-composeMaterial = '1.6.8'
-junit = '4.13.2'
-retrofit = '2.9.0'
-retrofitLogging = '4.9.0'
-room = '2.6.1'
-gson = '2.10.1'
-hilt = '2.49'
-hiltNavigation = '1.2.0'
-lifecycleViewModelCompose = '2.8.2'
-composeNavigation = '2.8.0-beta04'
-lifecycleRuntimeCompose = '2.8.2'
-coroutines = '1.8.0'
-retrofitConverterJackson = '2.11.0'
-timber = '5.0.1'
-datastore = '1.1.1'
-hiltWork = '1.2.0'
-hiltCompiler = '1.2.0'
-protobuf = '3.18.0'
-protobufPlugin = '0.9.1'
-protobufProtoc = '3.23.4'
-workRuntime = '2.9.0'
-swipeRefresh = '0.31.5-beta'
-systemUiController = '0.28.0'
-toolbarCompose = '2.3.5'
-junitJupiter = '5.10.0'
-junitPlugin = '1.9.3.0'
-mockitoCore = '5.4.0'
-mockitoKotlin = '5.0.0'
-androidxCore = '1.6.1'
-workTest = '2.9.0'
-coroutinesTest = '1.8.0'
-androidApplicationPlugin = "8.5.0"
-androidLibraryPlugin = "8.5.0"
+core-ktx = "1.13.1"
+lifecycle-runtime-ktx = "2.8.2"
+activity-compose = "1.9.0"
+compose-ui = "1.6.8"
+compose-material = "1.6.8"
+junit = "4.13.2"
+retrofit = "2.9.0"
+retrofit-logging = "4.9.0"
+room = "2.6.1"
+gson = "2.10.1"
+hilt = "2.49"
+hilt-navigation-compose = "1.2.0"
+lifecycle-viewmodel-compose = "2.8.2"
+compose-navigation = "2.8.0-beta04"
+lifecycle-runtime-compose = "2.8.2"
+coroutines = "1.8.0"
+retrofit-converter-jackson = "2.11.0"
+timber = "5.0.1"
+datastore = "1.1.1"
+hilt-work = "1.2.0"
+hilt-compiler = "1.2.0"
+protobuf = "3.18.0"
+protobuf-plugin = "0.9.1"
+protobuf-protoc = "3.23.4"
+work-runtime = "2.9.0"
+swipe-refresh = "0.31.5-beta"
+system-ui-controller = "0.28.0"
+toolbar-compose = "2.3.5"
+junit-jupiter = "5.10.0"
+junit-plugin = "1.9.3.0"
+mockito-core = "5.4.0"
+mockito-kotlin = "5.0.0"
+androidx-core = "1.6.1"
+work-test = "2.9.0"
+coroutines-test = "1.8.0"
+android-application-plugin = "8.5.0"
+android-library-plugin = "8.5.0"
 kotlin = "1.9.20"
 detekt = "1.23.0"
 ktlint = "11.5.0"
-jodaTime = "2.12.7"
-material3Android = "1.2.1"
-flowLayout = "0.34.0"
+joda-time = "2.12.7"
+material3-android = "1.2.1"
+flow-layout = "0.34.0"
 vico = "1.15.0"
-yCharts = "2.1.0"
-composeShimmer = "1.3.0"
-devtoolsKsp = "1.9.20-1.0.14"
+y-charts = "2.1.0"
+compose-shimmer = "1.3.0"
+devtools-ksp = "1.9.20-1.0.14"
 serialization = "1.5.1"
 
-
 [libraries]
-coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
-lifecycleRuntimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-lifecycleViewModelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
-lifecycleRuntimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
-datastorePreferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-viewmodel-compose" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-compose" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
-datastoreCore = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
-workRuntimeKtx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntime" }
-composeUi = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-composeMaterial = { module = "androidx.compose.material:material", version.ref = "composeMaterial" }
-composeUiPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
-retrofitCore = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofitConverterJackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofitConverterJackson" }
-retrofitLogging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "retrofitLogging" }
-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hiltNavigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
-hiltWork = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
-swipeRefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swipeRefresh" }
-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "systemUiController" }
+datastore-core = { module = "androidx.datastore:datastore-core", version.ref = "datastore" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-ui" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "compose-material" }
+compose-ui-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-ui" }
+compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit-converter-jackson" }
+retrofit-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "retrofit-logging" }
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-work" }
+swipe-refresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swipe-refresh" }
+system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "system-ui-controller" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-material3Android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3-android" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 protobuf = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
-# Keep
-protobufProtoc = { module = "com.google.protobuf:protoc", version.ref = "protobufProtoc" }
-toolbarCompose = { module = "me.onebone:toolbar-compose", version.ref = "toolbarCompose" }
-jodaTime = { module = "net.danlew:android.joda", version.ref = "jodaTime" }
-flowLayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "flowLayout" }
-vicoCompose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
-vicoCore = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "vico" }
-vicoViews = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
-yCharts = { module = "co.yml:ycharts", version.ref = "yCharts" }
-composeShimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "composeShimmer" }
+protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf-protoc" }
+toolbar-compose = { module = "me.onebone:toolbar-compose", version.ref = "toolbar-compose" }
+joda-time = { module = "net.danlew:android.joda", version.ref = "joda-time" }
+flow-layout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "flow-layout" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "vico" }
+vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
+y-charts = { module = "co.yml:ycharts", version.ref = "y-charts" }
+compose-shimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "compose-shimmer" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 # Debug dependencies
-debugComposeUiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-debugComposeUiManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+debug-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-ui" }
+debug-compose-ui-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-ui" }
 
 # Ksp dependencies
-kspRoomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+ksp-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
 # Kapt dependencies
-kaptHiltDaggerCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
-kaptHiltCompiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
+kapt-hilt-dagger-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+kapt-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-compiler" }
 
 # Test dependencies
-testUnit = { module = "junit:junit", version.ref = "junit" }
-testJunitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiter" }
-testJunitJupiterEngine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiter" }
-testJunitJupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junitJupiter" }
-testMockitoCore = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
-testMockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
-testAndroidxCore = { module = "androidx.test:core", version.ref = "androidxCore" }
-testWork = { module = "androidx.work:work-testing", version.ref = "workTest" }
-testCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+test-unit = { module = "junit:junit", version.ref = "junit" }
+test-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
+test-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
+test-junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit-jupiter" }
+test-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core" }
+test-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+test-androidx-core = { module = "androidx.test:core", version.ref = "androidx-core" }
+test-work = { module = "androidx.work:work-testing", version.ref = "work-test" }
+test-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "androidApplicationPlugin" }
-android-library = { id = "com.android.library", version.ref = "androidLibraryPlugin" }
+android-application = { id = "com.android.application", version.ref = "android-application-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-library-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
-devtoolsKsp = { id = "com.google.devtools.ksp", version.ref = "devtoolsKsp" }
-protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "junitPlugin" }
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtools-ksp" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "junit-plugin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
