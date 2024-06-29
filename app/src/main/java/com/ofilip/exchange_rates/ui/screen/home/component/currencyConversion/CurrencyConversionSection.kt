@@ -24,17 +24,21 @@ import com.ofilip.exchange_rates.ui.util.Dimens
 fun CurrencyConversionSection(
     modifier: Modifier = Modifier,
     viewModel: CurrencyConversionViewModel = hiltViewModel(),
-    onSelectConversionCurrencyFrom: () -> Unit,
-    onSelectConversionCurrencyTo: () -> Unit
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
     CurrencyConversionSectionContent(
+        modifier = modifier,
         uiState = uiState,
-        onSelectConversionCurrencyFrom = onSelectConversionCurrencyFrom,
-        onSelectConversionCurrencyTo = onSelectConversionCurrencyTo,
+        onNavigateToCurrencySelection = onNavigateToCurrencySelection,
         onConvertAmountFromChanged = viewModel::onConvertAmountFromChanged,
         onConvertAmountToChanged = viewModel::onConvertAmountToChanged,
+        onConvertCurrencyFromSelected = viewModel::setConversionCurrencyFrom,
+        onConvertCurrencyToSelected = viewModel::setConversionCurrencyTo
     )
 }
 
@@ -42,10 +46,14 @@ fun CurrencyConversionSection(
 fun CurrencyConversionSectionContent(
     modifier: Modifier = Modifier,
     uiState: CurrencyConversionUiState,
-    onSelectConversionCurrencyFrom: () -> Unit,
-    onSelectConversionCurrencyTo: () -> Unit,
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
     onConvertAmountFromChanged: (DecimalTextFieldValue) -> Unit,
-    onConvertAmountToChanged: (DecimalTextFieldValue) -> Unit
+    onConvertAmountToChanged: (DecimalTextFieldValue) -> Unit,
+    onConvertCurrencyFromSelected: (String) -> Unit,
+    onConvertCurrencyToSelected: (String) -> Unit
 ) {
     Card(modifier = modifier) {
         Column(
@@ -67,7 +75,13 @@ fun CurrencyConversionSectionContent(
                 amount = uiState.convertAmountFrom,
                 currencyCode = uiState.convertCurrencyFrom,
                 onAmountChanged = onConvertAmountFromChanged,
-                onCurrencySelectionClick = onSelectConversionCurrencyFrom,
+                onCurrencySelectionClick = {
+                    onNavigateToCurrencySelection(
+                        uiState.convertCurrencyFrom
+                    ) { result ->
+                        result?.let { onConvertCurrencyFromSelected(it) }
+                    }
+                },
                 label = {
                     Text(text = stringResource(id = R.string.currency_conversion_from_input_label))
                 },
@@ -82,7 +96,13 @@ fun CurrencyConversionSectionContent(
                 amount = uiState.convertAmountTo,
                 currencyCode = uiState.convertCurrencyTo,
                 onAmountChanged = onConvertAmountToChanged,
-                onCurrencySelectionClick = onSelectConversionCurrencyTo,
+                onCurrencySelectionClick = {
+                    onNavigateToCurrencySelection(
+                        uiState.convertCurrencyTo
+                    ) { result ->
+                        result?.let { onConvertCurrencyToSelected(it) }
+                    }
+                },
                 label = {
                     Text(text = stringResource(id = R.string.currency_conversion_to_input_label))
                 },
@@ -119,9 +139,10 @@ fun CurrencyConversionSectionContentPreviewLight() {
                 convertCurrencyToErrorMessage = null,
                 conversionErrorMessage = null
             ),
-            onSelectConversionCurrencyFrom = {},
-            onSelectConversionCurrencyTo = {},
             onConvertAmountFromChanged = {},
+            onNavigateToCurrencySelection = { _, _ -> },
+            onConvertCurrencyToSelected = {},
+            onConvertCurrencyFromSelected = {},
             onConvertAmountToChanged = {}
         )
     }
@@ -141,9 +162,10 @@ fun CurrencyConversionSectionContentPreviewDark() {
                 convertCurrencyToErrorMessage = null,
                 conversionErrorMessage = null
             ),
-            onSelectConversionCurrencyFrom = {},
-            onSelectConversionCurrencyTo = {},
             onConvertAmountFromChanged = {},
+            onNavigateToCurrencySelection = { _, _ -> },
+            onConvertCurrencyToSelected = {},
+            onConvertCurrencyFromSelected = {},
             onConvertAmountToChanged = {}
         )
     }

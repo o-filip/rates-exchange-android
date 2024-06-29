@@ -4,18 +4,26 @@ import com.ofilip.exchange_rates.domain.useCase.ApplyConversionRateToAmountUseCa
 import com.ofilip.exchange_rates.domain.useCase.ApplyConversionRateToAmountUseCaseImpl
 import com.ofilip.exchange_rates.domain.useCase.ConvertCurrencyUseCase
 import com.ofilip.exchange_rates.domain.useCase.ConvertCurrencyUseCaseImpl
+import com.ofilip.exchange_rates.domain.useCase.GetBaseRatesOfAllCurrenciesUseCase
+import com.ofilip.exchange_rates.domain.useCase.GetBaseRatesOfAllCurrenciesUseCaseImpl
+import com.ofilip.exchange_rates.domain.useCase.GetCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.GetCurrencyUseCaseImpl
 import com.ofilip.exchange_rates.domain.useCase.GetFilteredCurrenciesUseCase
 import com.ofilip.exchange_rates.domain.useCase.GetFilteredCurrenciesUseCaseImpl
 import com.ofilip.exchange_rates.domain.useCase.GetInternetConnectionStatusUseCase
 import com.ofilip.exchange_rates.domain.useCase.GetInternetConnectionStatusUseCaseImpl
 import com.ofilip.exchange_rates.domain.useCase.GetRatesForOverviewUseCase
 import com.ofilip.exchange_rates.domain.useCase.GetRatesForOverviewUseCaseImpl
-import com.ofilip.exchange_rates.domain.useCase.GetBaseRatesOfAllCurrenciesUseCase
-import com.ofilip.exchange_rates.domain.useCase.GetBaseRatesOfAllCurrenciesUseCaseImpl
-import com.ofilip.exchange_rates.domain.useCase.GetCurrencyUseCase
-import com.ofilip.exchange_rates.domain.useCase.GetCurrencyUseCaseImpl
+import com.ofilip.exchange_rates.domain.useCase.GetRatesTimeSeriesUseCase
+import com.ofilip.exchange_rates.domain.useCase.GetRatesTimeSeriesUseCaseImpl
 import com.ofilip.exchange_rates.domain.useCase.InitializeAppUseCase
 import com.ofilip.exchange_rates.domain.useCase.InitializeAppUseCaseImpl
+import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyFromUseCase
+import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyFromUseCaseImpl
+import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyToUseCase
+import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyToUseCaseImpl
+import com.ofilip.exchange_rates.domain.useCase.SetOverviewBaseCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.SetOverviewBaseCurrencyUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -63,6 +71,26 @@ abstract class UseCaseBindingModule {
     abstract fun bindGetCurrencyUseCase(
         useCaseImpl: GetCurrencyUseCaseImpl
     ): GetCurrencyUseCase
+
+    @Binds
+    abstract fun bindGetRatesTimeSeriesUseCase(
+        useCaseImpl: GetRatesTimeSeriesUseCaseImpl
+    ): GetRatesTimeSeriesUseCase
+
+    @Binds
+    abstract fun bindSetConversionCurrencyToUseCase(
+        useCaseImpl: SetConversionCurrencyToUseCaseImpl
+    ): SetConversionCurrencyToUseCase
+
+    @Binds
+    abstract fun bindSetConversionCurrencyFromUseCase(
+        useCaseImpl: SetConversionCurrencyFromUseCaseImpl
+    ): SetConversionCurrencyFromUseCase
+
+    @Binds
+    abstract fun bindSetOverviewBaseCurrencyUseCase(
+        useCaseImpl: SetOverviewBaseCurrencyUseCaseImpl
+    ): SetOverviewBaseCurrencyUseCase
 
 
 }

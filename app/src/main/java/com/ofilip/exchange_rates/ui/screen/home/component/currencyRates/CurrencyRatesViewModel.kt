@@ -6,6 +6,7 @@ import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.core.extensions.collectIn
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.domain.useCase.GetRatesForOverviewUseCase
+import com.ofilip.exchange_rates.domain.useCase.SetOverviewBaseCurrencyUseCase
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -25,7 +26,8 @@ data class CurrencyRatesUiState(
 class CurrencyRatesViewModel @Inject constructor(
     private val getOverviewRatesUseCase: GetRatesForOverviewUseCase,
     private val currencyRepository: CurrencyRepository,
-    private val uiErrorConverter: UiErrorConverter
+    private val uiErrorConverter: UiErrorConverter,
+    private val setOverviewBaseCurrencyUseCase: SetOverviewBaseCurrencyUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CurrencyRatesUiState())
@@ -80,5 +82,10 @@ class CurrencyRatesViewModel @Inject constructor(
         loadRates()
     }
 
+    fun onBaseCurrencySelected(currencyCode: String) {
+        viewModelScope.launch {
+            setOverviewBaseCurrencyUseCase.execute(currencyCode)
+        }
+    }
 
 }

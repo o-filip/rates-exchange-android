@@ -5,7 +5,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 interface ConvertCurrencyUseCase {
-    suspend fun convert(
+    suspend fun execute(
         amount: Double,
         fromCurrencyCode: String,
         toCurrencyCode: String
@@ -16,7 +16,7 @@ class ConvertCurrencyUseCaseImpl @Inject constructor(
     private val getRatesOfAllCurrenciesUseCase: GetBaseRatesOfAllCurrenciesUseCase,
     private val applyConversionRateToAmountUseCase: ApplyConversionRateToAmountUseCase
 ) : ConvertCurrencyUseCase {
-    override suspend fun convert(
+    override suspend fun execute(
         amount: Double,
         fromCurrencyCode: String,
         toCurrencyCode: String

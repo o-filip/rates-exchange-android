@@ -28,30 +28,35 @@ import com.ofilip.exchange_rates.ui.component.button.SpacerVertMedium
 import com.ofilip.exchange_rates.ui.extension.screenHorizontalPadding
 import com.ofilip.exchange_rates.ui.navigation.DefaultDest
 import com.ofilip.exchange_rates.ui.navigation.Dest
+import com.ofilip.exchange_rates.ui.navigation.encodeToNavPath
 import com.ofilip.exchange_rates.ui.screen.currencySelection.component.CurrencyFilterSection
 import com.ofilip.exchange_rates.ui.screen.currencySelection.component.CurrencySelectionListItem
 import com.ofilip.exchange_rates.ui.theme.ExchangeRatesTheme
 import com.ofilip.exchange_rates.ui.util.Dimens
 
-object CurrencySelectionScreenDest : Dest by DefaultDest("currencySelection/{mode}") {
-    fun path(mode: CurrencySelectionMode): String = "currencySelection/$mode"
+object CurrencySelectionScreenDest :
+    Dest by DefaultDest("currencySelection/{preselectedCurrencies}") {
 
-    override val arguments: List<NamedNavArgument> = listOf(
-        navArgument("mode") { type = NavType.EnumType(CurrencySelectionMode::class.java) }
-    )
+    fun path(preselectedCurrencies: List<String>): String =
+        "currencySelection/${preselectedCurrencies.encodeToNavPath()}"
+
+    override val arguments: List<NamedNavArgument> =
+        listOf(
+            navArgument("preselectedCurrencies") { type = NavType.StringType }
+        )
 }
 
 @Composable
 fun CurrencySelectionScreen(
     modifier: Modifier = Modifier,
     viewModel: CurrencySelectionViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: (selectedCurrency: String?) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
-    LaunchedEffect(uiState.wasCurrencySelected) {
-        if (uiState.wasCurrencySelected) {
-            onNavigateBack()
+    LaunchedEffect(uiState.userSelectedCurrency) {
+        if (uiState.userSelectedCurrency != null) {
+            onNavigateBack(uiState.userSelectedCurrency)
         }
     }
 
@@ -59,15 +64,13 @@ fun CurrencySelectionScreen(
         viewModel.init()
     }
 
-    CurrencySelectionScreenContent(
-        modifier = modifier,
+    CurrencySelectionScreenContent(modifier = modifier,
         uiState = uiState,
-        onNavigateBack = onNavigateBack,
+        onNavigateBack = { onNavigateBack(null) },
         onQueryUpdated = { viewModel.onQueryUpdated(it) },
         onToggleShowFavoritesOnly = { viewModel.toggleShowOnlyFavorites() },
         onCurrencySelected = { viewModel.onCurrencySelected(it) },
-        onCurrencyLikeToggled = { viewModel.toggleCurrencyLike(it) }
-    )
+        onCurrencyLikeToggled = { viewModel.toggleCurrencyLike(it) })
 }
 
 @Composable
@@ -80,21 +83,14 @@ fun CurrencySelectionScreenContent(
     onCurrencySelected: (Currency) -> Unit,
     onCurrencyLikeToggled: (Currency) -> Unit
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            TopAppBar(
-                elevation = 0.dp,
-                title = {
-                    Text(text = stringResource(id = R.string.currency_selection_title))
-                },
-                navigationIcon = {
-                    ArrowNavBack(onClick = onNavigateBack)
-                },
-                backgroundColor = MaterialTheme.colors.background
-            )
-        }
-    ) { contentPadding ->
+    Scaffold(modifier = modifier, topBar = {
+        TopAppBar(elevation = 0.dp, title = {
+            Text(text = stringResource(id = R.string.currency_selection_title))
+        }, navigationIcon = {
+            ArrowNavBack(onClick = { onNavigateBack() })
+        }, backgroundColor = MaterialTheme.colors.background
+        )
+    }) { contentPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -116,13 +112,12 @@ fun CurrencySelectionScreenContent(
                 items(
                     uiState.currencies,
                 ) { currency ->
-                    CurrencySelectionListItem(
-                        modifier = Modifier.padding(vertical = 4.dp),
+                    CurrencySelectionListItem(modifier = Modifier.padding(vertical = 4.dp),
                         currency = currency,
-                        isSelected = uiState.preselectedCurrency == currency.currencyCode,
+                        isSelected = uiState.selectedCurrencies?.contains(currency.currencyCode)
+                            ?: false,
                         onSelected = { onCurrencySelected(currency) },
-                        onFavoriteToggle = { onCurrencyLikeToggled(currency) }
-                    )
+                        onFavoriteToggle = { onCurrencyLikeToggled(currency) })
                 }
             }
         }
@@ -133,34 +128,31 @@ fun CurrencySelectionScreenContent(
 @Composable
 fun CurrencySelectionScreenContentPreviewLight() {
     ExchangeRatesTheme {
-        CurrencySelectionScreenContent(
-            uiState =
-            CurrencySelectionUiState(
-                currencies = listOf(
-                    Currency(
-                        currencyCode = "USD",
-                        currencyName = "United States Dollar",
-                        isFavorite = false,
-                        numberCode = "840",
-                        precision = 2,
-                        symbol = "$",
-                        decimalSeparator = ".",
-                        symbolFirst = true,
-                        thousandsSeparator = ","
-                    )
-                ),
-                query = TextFieldValue(),
-                showOnlyFavorites = false,
-                preselectedCurrency = null,
-                filteringErrorMessage = null,
-                wasCurrencySelected = false
+        CurrencySelectionScreenContent(uiState = CurrencySelectionUiState(
+            currencies = listOf(
+                Currency(
+                    currencyCode = "USD",
+                    currencyName = "United States Dollar",
+                    isFavorite = false,
+                    numberCode = "840",
+                    precision = 2,
+                    symbol = "$",
+                    decimalSeparator = ".",
+                    symbolFirst = true,
+                    thousandsSeparator = ","
+                )
             ),
+            query = TextFieldValue(),
+            showOnlyFavorites = false,
+            selectedCurrencies = null,
+            filteringErrorMessage = null,
+            userSelectedCurrency = null
+        ),
             onNavigateBack = { },
             onQueryUpdated = { },
             onToggleShowFavoritesOnly = { },
             onCurrencySelected = { },
-            onCurrencyLikeToggled = { }
-        )
+            onCurrencyLikeToggled = { })
     }
 }
 
@@ -168,33 +160,30 @@ fun CurrencySelectionScreenContentPreviewLight() {
 @Composable
 fun CurrencySelectionScreenContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
-        CurrencySelectionScreenContent(
-            uiState =
-            CurrencySelectionUiState(
-                currencies = listOf(
-                    Currency(
-                        currencyCode = "USD",
-                        currencyName = "United States Dollar",
-                        isFavorite = false,
-                        numberCode = "840",
-                        precision = 2,
-                        symbol = "$",
-                        decimalSeparator = ".",
-                        symbolFirst = true,
-                        thousandsSeparator = ","
-                    )
-                ),
-                query = TextFieldValue(),
-                showOnlyFavorites = false,
-                preselectedCurrency = null,
-                filteringErrorMessage = null,
-                wasCurrencySelected = false
+        CurrencySelectionScreenContent(uiState = CurrencySelectionUiState(
+            currencies = listOf(
+                Currency(
+                    currencyCode = "USD",
+                    currencyName = "United States Dollar",
+                    isFavorite = false,
+                    numberCode = "840",
+                    precision = 2,
+                    symbol = "$",
+                    decimalSeparator = ".",
+                    symbolFirst = true,
+                    thousandsSeparator = ","
+                )
             ),
+            query = TextFieldValue(),
+            showOnlyFavorites = false,
+            selectedCurrencies = null,
+            filteringErrorMessage = null,
+            userSelectedCurrency = null
+        ),
             onNavigateBack = { },
             onQueryUpdated = { },
             onToggleShowFavoritesOnly = { },
             onCurrencySelected = { },
-            onCurrencyLikeToggled = { }
-        )
+            onCurrencyLikeToggled = { })
     }
 }

@@ -8,11 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.ofilip.exchange_rates.ui.screen.currencyDetail.CurrencyDetailScreen
 import com.ofilip.exchange_rates.ui.screen.currencyDetail.CurrencyDetailScreenDest
-import com.ofilip.exchange_rates.ui.screen.currencySelection.CurrencySelectionMode
 import com.ofilip.exchange_rates.ui.screen.currencySelection.CurrencySelectionScreen
 import com.ofilip.exchange_rates.ui.screen.currencySelection.CurrencySelectionScreenDest
 import com.ofilip.exchange_rates.ui.screen.home.HomeScreen
 import com.ofilip.exchange_rates.ui.screen.home.HomeScreenDest
+import com.ofilip.exchange_rates.ui.screen.ratesTimeSeries.RatesTimeSeriesScreen
+import com.ofilip.exchange_rates.ui.screen.ratesTimeSeries.RatesTimeSeriesScreenDest
 import com.ofilip.exchange_rates.ui.screen.splash.SplashScreen
 import com.ofilip.exchange_rates.ui.screen.splash.SplashScreenDest
 
@@ -42,30 +43,30 @@ fun AppNavHost(
 
         composable(HomeScreenDest) {
             HomeScreen(
-                onNavigateToCurrencySelection = {
-                    navController.navigate(
-                        CurrencySelectionScreenDest.path(CurrencySelectionMode.OverviewCurrency)
-                    )
-                },
-                onNavigateToSelectConversionCurrencyFrom = {
-                    navController.navigate(
-                        CurrencySelectionScreenDest.path(CurrencySelectionMode.ConversionCurrencyFrom)
-                    )
-                },
-                onNavigateToSelectConversionCurrencyTo = {
-                    navController.navigate(
-                        CurrencySelectionScreenDest.path(CurrencySelectionMode.ConversionCurrencyTo)
+                onNavigateToCurrencySelection = { preselectedCurrency, resultCallback ->
+                    navController.navigateForResult(
+                        CurrencySelectionScreenDest.path(
+                            preselectedCurrency?.let { listOf(it) } ?: emptyList()
+                        ),
+                        navResultCallback = resultCallback
                     )
                 },
                 onNavigateToCurrencyDetail = { currencyCode ->
                     navController.navigate(CurrencyDetailScreenDest.path(currencyCode))
+                },
+                onNavigateToRatesTimeSeries = {
+                    navController.navigate(
+                        RatesTimeSeriesScreenDest.path()
+                    )
                 }
             )
         }
 
         composable(CurrencySelectionScreenDest) {
             CurrencySelectionScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { selectedCurrency ->
+                    navController.popBackStackWithResult(selectedCurrency)
+                }
             )
         }
 
@@ -73,6 +74,10 @@ fun AppNavHost(
             CurrencyDetailScreen(
                 onNavigateBack = { navController.popBackStack() }
             )
+        }
+
+        composable(RatesTimeSeriesScreenDest) {
+            RatesTimeSeriesScreen()
         }
     }
 }

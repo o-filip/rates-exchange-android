@@ -3,15 +3,18 @@ package com.ofilip.exchange_rates.data.repository
 import com.ofilip.exchange_rates.core.di.BaseRatesCurrency
 import com.ofilip.exchange_rates.core.di.CurrencyRemoteFetchLimitMs
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
+import com.ofilip.exchange_rates.core.entity.RatesTimeSeriesItem
 import com.ofilip.exchange_rates.core.extensions.toResultFlow
 import com.ofilip.exchange_rates.core.network.ConnectivityStatusHelper
 import com.ofilip.exchange_rates.data.convert.CurrencyRateConverter
+import com.ofilip.exchange_rates.data.convert.RatesTimeSeriesConverter
 import com.ofilip.exchange_rates.data.local.dataStore.CurrencyRateLocalDataStore
 import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import org.joda.time.DateTime
 
 @Singleton
 class CurrencyRateRepositoryImpl @Inject constructor(
@@ -19,6 +22,7 @@ class CurrencyRateRepositoryImpl @Inject constructor(
     private val currencyRateLocalDataStore: CurrencyRateLocalDataStore,
     private val connectivityStatusHelper: ConnectivityStatusHelper,
     private val currencyRateConverter: CurrencyRateConverter,
+    private val ratesTimeSeriesConverter: RatesTimeSeriesConverter,
     @BaseRatesCurrency
     private val baseCurrency: String,
     @CurrencyRemoteFetchLimitMs
@@ -34,7 +38,6 @@ class CurrencyRateRepositoryImpl @Inject constructor(
                 connectivityStatusHelper.isConnected.value &&
                         currencyRateLocalDataStore.lastRatesLoadTimestampMs.first() +
                         currencyRemoteFetchLimitMs < System.currentTimeMillis()
-
             },
             fetchFromRemote = {
                 currencyRemoteDataStore.getLatestRates(baseCurrency, currencyCodes)
@@ -59,5 +62,21 @@ class CurrencyRateRepositoryImpl @Inject constructor(
 
     private suspend fun updateLastRatesLoadTimestampToNow(): Result<Unit> = repoDoNoResult {
         currencyRateLocalDataStore.setLastRatesLoadTimestampMs(System.currentTimeMillis())
+    }
+
+    override suspend fun getRatesTimeSeries(
+        startDate: DateTime,
+        endDate: DateTime,
+        baseCurrencyCode: String,
+        currencyCodes: List<String>
+    ): Result<List<RatesTimeSeriesItem>> = repoFetchSuspend {
+        currencyRemoteDataStore.getRatesTimeSeries(
+            startDate,
+            endDate,
+            baseCurrencyCode,
+            currencyCodes
+        ).let {
+            ratesTimeSeriesConverter.convertRemoteToEntity(it)
+        }
     }
 }

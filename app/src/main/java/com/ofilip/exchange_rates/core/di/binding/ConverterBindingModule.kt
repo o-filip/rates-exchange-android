@@ -4,6 +4,8 @@ import com.ofilip.exchange_rates.data.convert.CurrencyConverter
 import com.ofilip.exchange_rates.data.convert.CurrencyConverterImpl
 import com.ofilip.exchange_rates.data.convert.CurrencyRateConverter
 import com.ofilip.exchange_rates.data.convert.CurrencyRateConverterImpl
+import com.ofilip.exchange_rates.data.convert.RatesTimeSeriesConverter
+import com.ofilip.exchange_rates.data.convert.RatesTimeSeriesConverterImpl
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import com.ofilip.exchange_rates.ui.util.UiErrorConverterImpl
 import dagger.Binds
@@ -29,5 +31,10 @@ abstract class ConverterBindingModule {
     abstract fun bindsUiErrorConverter(
         converter: UiErrorConverterImpl
     ): UiErrorConverter
+
+    @Binds
+    abstract fun bindsRatesTimeSeriesConverter(
+        converter: RatesTimeSeriesConverterImpl
+    ): RatesTimeSeriesConverter
 
 }

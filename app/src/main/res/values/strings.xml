@@ -35,6 +35,9 @@
     <string name="error_domain_currency_not_found">Currency not found</string>
     <string name="error_domain_currency_rate_not_found">Currency rate not found</string>
     <string name="error_ui_currency_not_selected">Please select a currency</string>
+    <string name="error_ui_currency_rate_not_selected">Please select a currency rate</string>
+    <string name="error_ui_no_currencies_selected">No currencies selected</string>
+    <string name="error_ui_start_date_is_after_end_date">Start date is after end date</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_data_unauthorized_full_explanation">Unauthorized request\n\nPlease check your API key in local.properties, or refer to project\'s readme file for more information how to obtain it (section installation)</string>
 </resources>

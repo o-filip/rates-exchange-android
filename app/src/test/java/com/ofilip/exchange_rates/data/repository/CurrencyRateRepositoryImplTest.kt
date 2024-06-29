@@ -38,7 +38,7 @@ class CurrencyRateRepositoryImplTest {
         connectivityStatusHelper,
         currencyRateConverter,
         baseCurrency = baseCurrencyCode,
-        currencyRemoteFetchLimitMs = currencyRemoteFetchLimitMs
+        currencyRemoteFetchLimitMs = currencyRemoteFetchLimitMs,
     )
 
     @Test

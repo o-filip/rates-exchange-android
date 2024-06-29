@@ -4,9 +4,12 @@ package com.ofilip.exchange_rates.data.remote.retrofit.generator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.ofilip.exchange_rates.BuildConfig
+import com.ofilip.exchange_rates.data.remote.retrofit.converter.DateConverterFactory
+import com.ofilip.exchange_rates.data.remote.retrofit.converter.DateDeserializer
 import com.ofilip.exchange_rates.data.remote.retrofit.interceptor.ApiLogger
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.joda.time.DateTime
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
@@ -16,6 +19,7 @@ class WsGenerator(
 
     private val builder = Retrofit.Builder()
         .baseUrl(apiBaseUrl)
+        .addConverterFactory(DateConverterFactory())
         .addConverterFactory(getFactory())
 
     /**
@@ -43,14 +47,8 @@ class WsGenerator(
         val objectMapper = ObjectMapper()
         val module = SimpleModule()
 
-//        module.addDeserializer(
-//            CurrenciesListRemoteModel::class.java,
-//            CurrenciesListDeserializer()
-//        )
-//        module.addDeserializer(
-//            CurrencyRatesListRemoteModel::class.java,
-//            CurrencyRatesListDeserializer()
-//        )
+        module.addKeyDeserializer(DateTime::class.java, DateDeserializer())
+
         objectMapper.registerModule(module)
 
         return JacksonConverterFactory.create(objectMapper)

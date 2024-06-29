@@ -84,9 +84,9 @@ class CurrencySelectionViewModelTest {
                 currencies = mockCurrencies,
                 query = TextFieldValue(),
                 showOnlyFavorites = false,
-                preselectedCurrency = preselectedCurrency,
+                selectedCurrency = preselectedCurrency,
                 filteringErrorMessage = null,
-                wasCurrencySelected = false
+                userSelectedCurrency = false
             )
 
             // When
@@ -121,7 +121,7 @@ class CurrencySelectionViewModelTest {
 
             // Then
             verify(mockCurrencyRepository).conversionCurrencyFrom
-            assertEquals(preselectedCurrency, viewModel.uiState.value.preselectedCurrency)
+            assertEquals(preselectedCurrency, viewModel.uiState.value.selectedCurrency)
         }
 
     @Test
@@ -137,9 +137,9 @@ class CurrencySelectionViewModelTest {
             currencies = mockCurrencies,
             query = TextFieldValue(queriedCurrency),
             showOnlyFavorites = false,
-            preselectedCurrency = preselectedCurrency,
+            selectedCurrency = preselectedCurrency,
             filteringErrorMessage = null,
-            wasCurrencySelected = false
+            userSelectedCurrency = false
         )
 
         // When
@@ -164,9 +164,9 @@ class CurrencySelectionViewModelTest {
             currencies = mockCurrencies,
             query = TextFieldValue(),
             showOnlyFavorites = true,
-            preselectedCurrency = preselectedCurrency,
+            selectedCurrency = preselectedCurrency,
             filteringErrorMessage = null,
-            wasCurrencySelected = false
+            userSelectedCurrency = false
         )
 
         // When

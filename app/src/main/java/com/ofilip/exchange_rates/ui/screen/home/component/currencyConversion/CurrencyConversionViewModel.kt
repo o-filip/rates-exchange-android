@@ -6,6 +6,8 @@ import com.ofilip.exchange_rates.core.error.UiError
 import com.ofilip.exchange_rates.core.extensions.collectIn
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.domain.useCase.ConvertCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyFromUseCase
+import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyToUseCase
 import com.ofilip.exchange_rates.ui.component.field.DecimalTextFieldValue
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +32,8 @@ class CurrencyConversionViewModel @Inject constructor(
     private val convertCurrencyUseCase: ConvertCurrencyUseCase,
     private val uiErrorConverter: UiErrorConverter,
     currencyRepository: CurrencyRepository,
+    private val setConversionCurrencyToUseCase: SetConversionCurrencyToUseCase,
+    private val setConversionCurrencyFromUseCase: SetConversionCurrencyFromUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CurrencyConversionUiState())
     val uiState: StateFlow<CurrencyConversionUiState> get() = _uiState
@@ -114,7 +118,7 @@ class CurrencyConversionViewModel @Inject constructor(
         } else if (fromCurrency == null || toCurrency == null) {
             Result.failure(UiError.CurrencyNotSelected)
         } else {
-            convertCurrencyUseCase.convert(
+            convertCurrencyUseCase.execute(
                 amount,
                 fromCurrency,
                 toCurrency
@@ -136,6 +140,18 @@ class CurrencyConversionViewModel @Inject constructor(
                     conversionErrorMessage = uiErrorConverter.convertToText(it)
                 )
             }
+        }
+    }
+
+    fun setConversionCurrencyFrom(currency: String) {
+        viewModelScope.launch {
+            setConversionCurrencyFromUseCase.execute(currency)
+        }
+    }
+
+    fun setConversionCurrencyTo(currency: String) {
+        viewModelScope.launch {
+            setConversionCurrencyToUseCase.execute(currency)
         }
     }
 }

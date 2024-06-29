@@ -59,5 +59,7 @@ class UiErrorConverterImpl @Inject constructor(
     private fun convertUiError(error: UiError): String =
         when (error) {
             UiError.CurrencyNotSelected -> context.getString(R.string.error_ui_currency_not_selected)
+            UiError.NoCurrenciesSelected -> context.getString(R.string.error_ui_no_currencies_selected)
+            UiError.StartDateIsAfterEndDate -> context.getString(R.string.error_ui_start_date_is_after_end_date)
         }
 }

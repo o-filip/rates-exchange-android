@@ -165,6 +165,7 @@ dependencies {
     implementation(libs.swipeRefresh)
     implementation(libs.systemUiController)
     implementation(libs.toolbarCompose)
+    implementation(libs.jodaTime)
 
     testImplementation(libs.testUnit)
     testImplementation(libs.testJunitJupiterApi)

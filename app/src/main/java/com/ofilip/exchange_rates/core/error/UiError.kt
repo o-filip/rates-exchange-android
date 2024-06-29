@@ -7,4 +7,12 @@ sealed class UiError @JvmOverloads constructor(
     data object CurrencyNotSelected : UiError() {
         private fun readResolve(): Any = CurrencyNotSelected
     }
+
+    data object NoCurrenciesSelected: UiError() {
+        private fun readResolve(): Any = NoCurrenciesSelected
+    }
+
+    data object StartDateIsAfterEndDate: UiError() {
+        private fun readResolve(): Any = StartDateIsAfterEndDate
+    }
 }
