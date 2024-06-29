@@ -1,5 +1,7 @@
 package com.ofilip.exchange_rates.data.repository
 
+import com.ofilip.exchange_rates.core.di.AppDispatchers
+import com.ofilip.exchange_rates.core.di.Dispatcher
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.data.convert.CurrencyConverter
 import com.ofilip.exchange_rates.data.local.dataStore.CurrencyLocalDataStore
@@ -7,13 +9,16 @@ import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
 import com.ofilip.exchange_rates.data.remote.model.CurrencyRemoteModel
 import com.ofilip.exchange_rates.data.util.RemoteAndLocalModelDiffer
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 
 class CurrencyRepositoryImpl @Inject constructor(
     private val remoteDataStore: CurrencyRemoteDataStore,
     private val currencyLocalDataStore: CurrencyLocalDataStore,
     private val currencyConverter: CurrencyConverter,
+    @Dispatcher(AppDispatchers.IO) private val dispatcher: CoroutineDispatcher
 ) : BaseRepository(), CurrencyRepository {
 
     override suspend fun prefetchCurrencies() = repoDoWithoutResult {
@@ -33,7 +38,7 @@ class CurrencyRepositoryImpl @Inject constructor(
 
     private suspend fun updateLocalCurrenciesByRemoteModels(
         remoteCurrencies: List<CurrencyRemoteModel>
-    ) {
+    ) = withContext(dispatcher) {
         RemoteAndLocalModelDiffer(
             remoteItems = remoteCurrencies,
             localItems = currencyLocalDataStore.getAll().first(),

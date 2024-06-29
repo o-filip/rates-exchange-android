@@ -1,13 +1,17 @@
 package com.ofilip.exchange_rates.ui.util
 
+import com.ofilip.exchange_rates.core.di.AppDispatchers
+import com.ofilip.exchange_rates.core.di.Dispatcher
 import com.ofilip.exchange_rates.core.error.UiError
 import com.ofilip.exchange_rates.domain.useCase.conversion.ConvertCurrencyUseCase
 import com.ofilip.exchange_rates.ui.component.field.DecimalTextFieldValue
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 
 /**
@@ -25,7 +29,8 @@ interface CurrencyConversionProcessor {
 }
 
 class CurrencyConversionProcessorImpl @Inject constructor(
-    private val convertCurrencyUseCase: ConvertCurrencyUseCase
+    private val convertCurrencyUseCase: ConvertCurrencyUseCase,
+    @Dispatcher(AppDispatchers.Default) private val dispatcher: CoroutineDispatcher
 ) : CurrencyConversionProcessor {
     private val inputFlow = MutableStateFlow<ConversionEvent?>(null)
 
@@ -47,6 +52,7 @@ class CurrencyConversionProcessorImpl @Inject constructor(
         }
         // If the conversion fails, we ignore the event
         .filterNotNull()
+        .flowOn(dispatcher)
 
     /**
      * Adds a new event to the processor

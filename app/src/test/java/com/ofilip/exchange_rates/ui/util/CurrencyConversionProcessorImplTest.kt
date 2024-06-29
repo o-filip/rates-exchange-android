@@ -6,6 +6,7 @@ import com.ofilip.exchange_rates.ui.component.field.DecimalTextFieldValue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
-
 import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
@@ -23,7 +23,9 @@ class CurrencyConversionProcessorImplTest {
 
     @BeforeEach
     fun setUp() {
-        processor = CurrencyConversionProcessorImpl(mockConvertCurrencyUseCase)
+        processor = CurrencyConversionProcessorImpl(
+            mockConvertCurrencyUseCase, UnconfinedTestDispatcher()
+        )
     }
 
     @Test

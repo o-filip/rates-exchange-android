@@ -9,10 +9,17 @@ import com.ofilip.exchange_rates.data.local.dataStore.CurrencyLocalDataStore
 import com.ofilip.exchange_rates.data.local.dataStore.CurrencyRateLocalDataStore
 import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
 import com.ofilip.exchange_rates.fixtures.Fixtures
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -35,6 +42,7 @@ class CurrencyRateRepositoryImplTest {
     private val currencyRemoteFetchLimitMs: Long = 1000L
     private val baseCurrencyCode: String = "EUR"
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val repository = CurrencyRateRepositoryImpl(
         remoteDataStore,
         currencyRateLocalDataStore,
@@ -42,7 +50,8 @@ class CurrencyRateRepositoryImplTest {
         currencyRateConverter,
         baseCurrency = baseCurrencyCode,
         currencyRemoteFetchLimitMs = currencyRemoteFetchLimitMs,
-        ratesTimeSeriesConverter = ratesTimeSeriesConverter
+        ratesTimeSeriesConverter = ratesTimeSeriesConverter,
+        dispatcher = UnconfinedTestDispatcher()
     )
 
     @Test

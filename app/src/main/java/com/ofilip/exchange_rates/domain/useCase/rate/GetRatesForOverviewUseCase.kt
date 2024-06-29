@@ -1,12 +1,16 @@
 package com.ofilip.exchange_rates.domain.useCase.rate
 
+import com.ofilip.exchange_rates.core.di.AppDispatchers
+import com.ofilip.exchange_rates.core.di.Dispatcher
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.domain.useCase.conversion.ApplyConversionRateToAmountUseCase
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 /**
@@ -21,6 +25,7 @@ class GetRatesForOverviewUseCaseImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository,
     private val getRatesOfAllCurrenciesUseCase: GetBaseRatesOfAllCurrenciesUseCase,
     private val applyConversionRateToAmountUseCase: ApplyConversionRateToAmountUseCase,
+    @Dispatcher(AppDispatchers.Default) private val dispatcher: CoroutineDispatcher
 ) : GetRatesForOverviewUseCase {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -29,6 +34,7 @@ class GetRatesForOverviewUseCaseImpl @Inject constructor(
             .flatMapLatest { overviewCurrency ->
                 getRatesOfAllCurrenciesUseCase.execute()
                     .map { rates -> convertCurrencyRates(rates, overviewCurrency) }
+                    .flowOn(dispatcher)
             }
     }
 

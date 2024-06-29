@@ -7,6 +7,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,7 +27,8 @@ class GetRatesForOverviewUseCaseImplTest {
     private val useCase = GetRatesForOverviewUseCaseImpl(
         mockCurrencyRepository,
         mockGetRatesOfAllCurrenciesUseCase,
-        mockApplyConversionRateToAmountUseCase
+        mockApplyConversionRateToAmountUseCase,
+        UnconfinedTestDispatcher()
     )
 
     @Test

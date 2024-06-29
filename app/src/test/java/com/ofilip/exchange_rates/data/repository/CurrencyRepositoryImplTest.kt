@@ -5,9 +5,12 @@ import com.ofilip.exchange_rates.data.convert.CurrencyConverter
 import com.ofilip.exchange_rates.data.local.dataStore.CurrencyLocalDataStore
 import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
 import com.ofilip.exchange_rates.fixtures.Fixtures
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,10 +27,12 @@ class CurrencyRepositoryImplTest {
     private val currencyLocalDataStore: CurrencyLocalDataStore = mock()
     private val currencyConverter: CurrencyConverter = mock()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val currencyRepository = CurrencyRepositoryImpl(
         remoteDataStore,
         currencyLocalDataStore,
-        currencyConverter
+        currencyConverter,
+        UnconfinedTestDispatcher()
     )
 
     private val remoteResponse = Fixtures.currenciesRemoteModels
