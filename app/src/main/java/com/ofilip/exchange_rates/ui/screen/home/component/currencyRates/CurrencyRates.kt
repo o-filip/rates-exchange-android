@@ -20,13 +20,13 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.ui.component.button.CurrencySelectionButton
@@ -45,7 +45,7 @@ fun CurrencyRatesSection(
     ) -> Unit,
     onNavigateToCurrencyDetail: (currencyCode: String) -> Unit,
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
         viewModel.init()
@@ -132,6 +132,7 @@ fun LazyListScope.currencyRatesSection(
 
     items(
         rates,
+        key = { it.currency },
         itemContent = { currencyRate ->
             CurrencyRateListItem(
                 currencyRate = currencyRate,
@@ -180,31 +181,26 @@ fun CurrencyRatesSectionHeader(
                 .padding(top = Dimens.cardVerticalPadding())
                 .padding(bottom = Dimens.spacingLarge())
         ) {
+            // Headline
             Text(
                 text = stringResource(id = R.string.currency_rates_header),
                 style = MaterialTheme.typography.h3
             )
-
             SpacerVertMedium()
-
-            if (baseCurrencyErrorMessage != null) {
+            // Error message
+            if (ratesLoadErrorMessage != null || baseCurrencyErrorMessage != null) {
                 Text(
-                    text = baseCurrencyErrorMessage,
+                    text = when {
+                        ratesLoadErrorMessage != null -> ratesLoadErrorMessage
+                        baseCurrencyErrorMessage != null -> baseCurrencyErrorMessage
+                        else -> "$ratesLoadErrorMessage\n$baseCurrencyErrorMessage"
+                    },
                     style = MaterialTheme.typography.body1
                 )
 
                 SpacerVertMedium()
             }
-
-            if (ratesLoadErrorMessage != null) {
-                Text(
-                    text = ratesLoadErrorMessage,
-                    style = MaterialTheme.typography.body1
-                )
-
-                SpacerVertMedium()
-            }
-
+            // Base currency selection button
             CurrencySelectionButton(
                 onClick = {
                     onNavigateToCurrencySelection(
@@ -228,9 +224,9 @@ fun CurrencyRatesSectionContentPreviewLight() {
         CurrencyRatesSectionContent(
             uiState = CurrencyRatesUiState(
                 rates = listOf(
-                    CurrencyRate("EUR", 1.0),
-                    CurrencyRate("USD", 1.2),
-                    CurrencyRate("GBP", 0.9),
+                    CurrencyRate("EUR", rate = 1.0),
+                    CurrencyRate("USD", rate = 1.2),
+                    CurrencyRate("GBP", rate = 0.9),
                 ),
                 overviewCurrency = "EUR",
                 ratesLoading = false
@@ -251,9 +247,9 @@ fun CurrencyRatesSectionContentPreviewDark() {
         CurrencyRatesSectionContent(
             uiState = CurrencyRatesUiState(
                 rates = listOf(
-                    CurrencyRate("EUR", 1.0),
-                    CurrencyRate("USD", 1.2),
-                    CurrencyRate("GBP", 0.9),
+                    CurrencyRate("EUR", rate = 1.0),
+                    CurrencyRate("USD", rate = 1.2),
+                    CurrencyRate("GBP", rate = 0.9),
                 ),
                 overviewCurrency = "EUR",
                 ratesLoading = false

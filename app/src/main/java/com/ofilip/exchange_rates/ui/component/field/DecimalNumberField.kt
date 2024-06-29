@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.ofilip.exchange_rates.ui.theme.Transparent
 import java.text.DecimalFormat
 
-class DecimalTextFieldValue constructor(
+class DecimalTextFieldValue(
     val text: TextFieldValue = TextFieldValue(),
     val number: Double? = null
 ) {

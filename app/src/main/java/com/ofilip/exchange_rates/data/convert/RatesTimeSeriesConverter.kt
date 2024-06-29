@@ -15,8 +15,7 @@ class RatesTimeSeriesConverterImpl @Inject constructor() : RatesTimeSeriesConver
     override fun convertRemoteToEntity(remote: RatesTimeSeriesRemoteModel): List<RatesTimeSeriesItem> =
         remote.response.entries.map {
             RatesTimeSeriesItem(
-//                date = it.key,
-                date = DateTime.now(),
+                date = it.key,
                 rates = it.value
             )
         }

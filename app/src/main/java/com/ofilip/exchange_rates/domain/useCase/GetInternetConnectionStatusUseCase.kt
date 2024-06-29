@@ -7,6 +7,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
+/**
+ * Use case to get the internet connection status and the timestamp of the last data load
+ */
 interface GetInternetConnectionStatusUseCase {
     fun execute(): Flow<Result<InternetConnectionStatus>>
 }

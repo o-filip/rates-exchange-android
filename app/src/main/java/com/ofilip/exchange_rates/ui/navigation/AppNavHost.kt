@@ -77,7 +77,15 @@ fun AppNavHost(
         }
 
         composable(RatesTimeSeriesScreenDest) {
-            RatesTimeSeriesScreen()
+            RatesTimeSeriesScreen(
+                onNavigateToCurrencySelection = { preselectedCurrencies, resultCallback ->
+                    navController.navigateForResult(
+                        CurrencySelectionScreenDest.path(preselectedCurrencies ?: emptyList()),
+                        navResultCallback = resultCallback
+                    )
+                },
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
     }
 }

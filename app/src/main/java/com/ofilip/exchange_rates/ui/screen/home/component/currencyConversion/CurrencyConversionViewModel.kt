@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ofilip.exchange_rates.core.error.UiError
 import com.ofilip.exchange_rates.core.extensions.collectIn
-import com.ofilip.exchange_rates.data.repository.CurrencyRepository
-import com.ofilip.exchange_rates.domain.useCase.ConvertCurrencyUseCase
-import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyFromUseCase
-import com.ofilip.exchange_rates.domain.useCase.SetConversionCurrencyToUseCase
+import com.ofilip.exchange_rates.domain.useCase.conversion.ConvertCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetConversionCurrencyFromUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetConversionCurrencyToUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.SetConversionCurrencyFromUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.SetConversionCurrencyToUseCase
 import com.ofilip.exchange_rates.ui.component.field.DecimalTextFieldValue
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +32,8 @@ data class CurrencyConversionUiState(
 class CurrencyConversionViewModel @Inject constructor(
     private val convertCurrencyUseCase: ConvertCurrencyUseCase,
     private val uiErrorConverter: UiErrorConverter,
-    currencyRepository: CurrencyRepository,
+    getConversionCurrencyFromUseCase: GetConversionCurrencyFromUseCase,
+    getConversionCurrencyToUseCase: GetConversionCurrencyToUseCase,
     private val setConversionCurrencyToUseCase: SetConversionCurrencyToUseCase,
     private val setConversionCurrencyFromUseCase: SetConversionCurrencyFromUseCase
 ) : ViewModel() {
@@ -39,7 +41,7 @@ class CurrencyConversionViewModel @Inject constructor(
     val uiState: StateFlow<CurrencyConversionUiState> get() = _uiState
 
     init {
-        currencyRepository.conversionCurrencyFrom.collectIn(viewModelScope) { currency ->
+        getConversionCurrencyFromUseCase.execute().collectIn(viewModelScope) { currency ->
             currency.onSuccess {
                 _uiState.value = uiState.value.copy(
                     convertCurrencyFrom = it
@@ -53,7 +55,7 @@ class CurrencyConversionViewModel @Inject constructor(
             }
         }
 
-        currencyRepository.conversionCurrencyTo.collectIn(viewModelScope) { currency ->
+        getConversionCurrencyToUseCase.execute().collectIn(viewModelScope) { currency ->
             currency.onSuccess {
                 _uiState.value = uiState.value.copy(
                     convertCurrencyTo = it

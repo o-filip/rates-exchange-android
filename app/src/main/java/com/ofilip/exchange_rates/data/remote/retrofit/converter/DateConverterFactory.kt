@@ -10,13 +10,13 @@ import retrofit2.Retrofit
 @Retention(AnnotationRetention.RUNTIME)
 annotation class DateQuery
 
-class DateConverterFactory: Converter.Factory() {
+class DateConverterFactory : Converter.Factory() {
     override fun stringConverter(
         type: Type,
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): Converter<*, String>? {
-        if (annotations.any { it is DateQuery}) {
+        if (annotations.any { it is DateQuery }) {
             return Converter<Any, String> { value ->
                 if (value !is DateTime) {
                     throw IllegalArgumentException("Value must be a DateTime")

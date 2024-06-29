@@ -1,4 +1,4 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.rate
 
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.core.extensions.flatMapLatestResult
@@ -8,6 +8,9 @@ import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Use case to get the rates of all currencies relative to the app base currency
+ */
 interface GetBaseRatesOfAllCurrenciesUseCase {
     fun execute(): Flow<Result<List<CurrencyRate>>>
 }

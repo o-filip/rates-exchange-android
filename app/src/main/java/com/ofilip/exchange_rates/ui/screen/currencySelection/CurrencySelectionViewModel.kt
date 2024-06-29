@@ -1,14 +1,13 @@
 package com.ofilip.exchange_rates.ui.screen.currencySelection
 
-import android.util.Log
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.core.extensions.filterWithPrev
-import com.ofilip.exchange_rates.data.repository.CurrencyRepository
-import com.ofilip.exchange_rates.domain.useCase.GetFilteredCurrenciesUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetFilteredCurrenciesUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.UpdateCurrencyFavoriteStateUseCase
 import com.ofilip.exchange_rates.ui.navigation.decodeListStringFromNavPath
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +31,7 @@ data class CurrencySelectionUiState(
 class CurrencySelectionViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getFilteredCurrencies: GetFilteredCurrenciesUseCase,
-    private val currencyRepository: CurrencyRepository,
+    private val updateCurrencyFavoriteStateUseCase: UpdateCurrencyFavoriteStateUseCase,
     private val uiErrorConverter: UiErrorConverter
 ) : ViewModel() {
 
@@ -46,10 +45,8 @@ class CurrencySelectionViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             selectedCurrencies = preselectedCurrency,
         )
-        Log.d("XXXXXXXXX", "init4 ${_uiState.value.selectedCurrencies}")
         initFilteringByQuery()
     }
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun initFilteringByQuery() {
@@ -85,7 +82,7 @@ class CurrencySelectionViewModel @Inject constructor(
 
     fun toggleCurrencyLike(currency: Currency) {
         viewModelScope.launch {
-            currencyRepository.updateCurrencyFavoriteState(currency, !currency.isFavorite)
+            updateCurrencyFavoriteStateUseCase.execute(currency, !currency.isFavorite)
         }
     }
 

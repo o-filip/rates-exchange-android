@@ -1,4 +1,4 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.currency
 
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.core.error.DomainError
@@ -7,6 +7,10 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Use case to get a currency by its code
+ *
+ */
 abstract class GetCurrencyUseCase {
 
     abstract fun execute(currencyCode: String): Flow<Result<Currency>>

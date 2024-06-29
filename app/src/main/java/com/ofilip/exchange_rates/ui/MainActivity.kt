@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.ui.component.NoInternetConnectionStatusBar
 import com.ofilip.exchange_rates.ui.navigation.AppNavHost
 import com.ofilip.exchange_rates.ui.screen.home.component.themeToggle.ThemeViewModel
@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val connectionStatus =
-                mainViewModel.internetConnectionStatus.collectAsState(initial = null).value
-            val darkTheme = themeViewModel.darkTheme.collectAsState(initial = null).value
+                mainViewModel.internetConnectionStatus.collectAsStateWithLifecycle(null).value
+            val darkTheme = themeViewModel.darkTheme.collectAsStateWithLifecycle(null).value
 
             ExchangeRatesTheme(
                 darkTheme = darkTheme ?: isSystemInDarkTheme()

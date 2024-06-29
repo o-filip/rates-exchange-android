@@ -9,6 +9,5 @@ import org.joda.time.DateTime
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class RatesTimeSeriesRemoteModel(
     @JsonProperty("response")
-    @JsonSerialize
     val response: Map<DateTime, Map<String, Double?>>
 )

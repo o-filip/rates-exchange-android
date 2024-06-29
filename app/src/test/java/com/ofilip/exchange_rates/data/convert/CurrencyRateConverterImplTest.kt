@@ -3,7 +3,7 @@ package com.ofilip.exchange_rates.data.convert
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class CurrencyRateConverterTest {
+class CurrencyRateConverterImplTest {
 
     private val converter: CurrencyRateConverter = CurrencyRateConverterImpl()
 

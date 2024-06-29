@@ -1,8 +1,11 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.currency
 
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import javax.inject.Inject
 
+/**
+ * Use case to set and store the currency code to convert from used in main conversion screen
+ */
 interface SetConversionCurrencyFromUseCase {
     suspend fun execute(currency: String): Result<Unit>
 }

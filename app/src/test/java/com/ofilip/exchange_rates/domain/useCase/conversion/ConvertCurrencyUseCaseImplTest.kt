@@ -1,7 +1,8 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.conversion
 
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.core.error.DomainError
+import com.ofilip.exchange_rates.domain.useCase.rate.GetBaseRatesOfAllCurrenciesUseCase
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals

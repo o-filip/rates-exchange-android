@@ -70,7 +70,7 @@ fun CurrencySelectionListItem(
 
 @Preview
 @Composable
-private fun CurrencySelectionListItemPreviewLight() {
+fun CurrencySelectionListItemPreviewLight() {
     ExchangeRatesTheme {
         CurrencySelectionListItem(
             currency = Currency(
@@ -93,7 +93,7 @@ private fun CurrencySelectionListItemPreviewLight() {
 
 @Preview(showBackground = true)
 @Composable
-private fun CurrencySelectionListItemPreviewDark() {
+fun CurrencySelectionListItemPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencySelectionListItem(
             currency = Currency(

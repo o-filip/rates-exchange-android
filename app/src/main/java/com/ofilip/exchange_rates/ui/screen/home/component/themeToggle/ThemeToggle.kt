@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.ui.theme.ExchangeRatesTheme
 
@@ -21,7 +21,8 @@ fun ThemeToggleSection(
     modifier: Modifier = Modifier,
     themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
-    val darkTheme = themeViewModel.darkTheme.collectAsState(initial = null).value ?: isSystemInDarkTheme()
+    val darkTheme =
+        themeViewModel.darkTheme.collectAsStateWithLifecycle(null).value ?: isSystemInDarkTheme()
 
     ThemeToggleSectionContent(
         modifier = modifier,

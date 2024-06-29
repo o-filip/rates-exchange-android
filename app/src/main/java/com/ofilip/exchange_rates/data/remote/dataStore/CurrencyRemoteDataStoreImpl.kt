@@ -35,7 +35,7 @@ class CurrencyRemoteDataStoreImpl @Inject constructor(
             startDate,
             endDate,
             base,
-            symbols
+            symbols?.joinToString(",")
         )
     }
 }

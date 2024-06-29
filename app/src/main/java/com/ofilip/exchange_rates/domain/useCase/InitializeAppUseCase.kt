@@ -3,6 +3,9 @@ package com.ofilip.exchange_rates.domain.useCase
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import javax.inject.Inject
 
+/**
+ * Use case to initialize the app
+ */
 interface InitializeAppUseCase {
     suspend fun execute(): Result<Unit>
 }

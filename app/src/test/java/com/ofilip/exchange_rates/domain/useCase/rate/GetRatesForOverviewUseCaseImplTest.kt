@@ -1,7 +1,8 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.rate
 
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
+import com.ofilip.exchange_rates.domain.useCase.conversion.ApplyConversionRateToAmountUseCase
 import com.ofilip.exchange_rates.fixtures.toFlowOfFailure
 import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +17,7 @@ import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
-class GetRatesForOverviewUseCaseTest {
+class GetRatesForOverviewUseCaseImplTest {
 
     private val mockCurrencyRepository: CurrencyRepository = mock()
     private val mockGetRatesOfAllCurrenciesUseCase: GetBaseRatesOfAllCurrenciesUseCase = mock()

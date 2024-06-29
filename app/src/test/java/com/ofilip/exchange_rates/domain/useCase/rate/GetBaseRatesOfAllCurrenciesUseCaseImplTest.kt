@@ -1,4 +1,4 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.rate
 
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.data.repository.CurrencyRateRepository
@@ -15,7 +15,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 
-class GetBaseRatesOfAllCurrenciesUseCaseTest {
+class GetBaseRatesOfAllCurrenciesUseCaseImplTest {
 
     private val mockCurrencyRepository: CurrencyRepository = mock()
     private val mockCurrencyRateRepository: CurrencyRateRepository = mock()

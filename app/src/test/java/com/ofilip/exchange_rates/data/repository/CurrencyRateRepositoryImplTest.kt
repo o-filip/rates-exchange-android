@@ -4,6 +4,7 @@ import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.core.error.DataError
 import com.ofilip.exchange_rates.core.network.ConnectivityStatusHelper
 import com.ofilip.exchange_rates.data.convert.CurrencyRateConverter
+import com.ofilip.exchange_rates.data.convert.RatesTimeSeriesConverter
 import com.ofilip.exchange_rates.data.local.dataStore.CurrencyLocalDataStore
 import com.ofilip.exchange_rates.data.local.dataStore.CurrencyRateLocalDataStore
 import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
@@ -28,6 +29,7 @@ class CurrencyRateRepositoryImplTest {
     private val currencyRateLocalDataStore: CurrencyRateLocalDataStore = mock()
     private val connectivityStatusHelper: ConnectivityStatusHelper = mock()
     private val currencyRateConverter: CurrencyRateConverter = mock()
+    private val ratesTimeSeriesConverter: RatesTimeSeriesConverter = mock()
 
     private val currencyRemoteFetchLimitMs: Long = 1000L
     private val baseCurrencyCode: String = "EUR"
@@ -39,10 +41,11 @@ class CurrencyRateRepositoryImplTest {
         currencyRateConverter,
         baseCurrency = baseCurrencyCode,
         currencyRemoteFetchLimitMs = currencyRemoteFetchLimitMs,
+        ratesTimeSeriesConverter = ratesTimeSeriesConverter
     )
 
     @Test
-    fun `getRates loads data from remote store them in local data store and then return it from local data store if device is online`() =
+    fun `getRates loads data from remote and caches it if device is online`() =
         runBlocking {
             // Given
             val connectivityStatusFlow = MutableStateFlow(true)

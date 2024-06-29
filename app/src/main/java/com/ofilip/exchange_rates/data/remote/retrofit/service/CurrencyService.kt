@@ -28,6 +28,6 @@ interface CurrencyService {
         @Query("start_date") @DateQuery startDate: DateTime,
         @Query("end_date") @DateQuery endDate: DateTime,
         @Query("base") base: String,
-        @Query("symbols") symbols: List<String>? = null
+        @Query("symbols") symbols: String? = null
     ): Response<RatesTimeSeriesRemoteModel>
 }

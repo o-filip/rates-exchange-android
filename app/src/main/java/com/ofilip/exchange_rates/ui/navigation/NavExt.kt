@@ -24,10 +24,10 @@ fun <T> NavController.navigateForResult(
     navigate(route, navOptions, navigatorExtras)
 }
 
-private const val NavResultCallbackKey = "NavResultCallbackKey"
+private const val NAV_RESULT_CALLBACK_KEY = "NavResultCallbackKey"
 
 fun <T> NavController.setNavResultCallback(callback: (T) -> Unit) {
-    currentBackStackEntry?.savedStateHandle?.set(NavResultCallbackKey, callback)
+    currentBackStackEntry?.savedStateHandle?.set(NAV_RESULT_CALLBACK_KEY, callback)
 }
 
 fun <T> NavController.popBackStackWithResult(result: T) {
@@ -36,5 +36,5 @@ fun <T> NavController.popBackStackWithResult(result: T) {
 }
 
 fun <T> NavController.getNavResultCallback(): ((T) -> Unit)? {
-    return previousBackStackEntry?.savedStateHandle?.remove(NavResultCallbackKey)
+    return previousBackStackEntry?.savedStateHandle?.remove(NAV_RESULT_CALLBACK_KEY)
 }

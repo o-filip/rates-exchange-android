@@ -1,4 +1,4 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.conversion
 
 import javax.inject.Inject
 

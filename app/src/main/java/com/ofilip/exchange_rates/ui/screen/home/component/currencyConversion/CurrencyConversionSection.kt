@@ -7,12 +7,12 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.ui.component.button.SpacerVertMedium
 import com.ofilip.exchange_rates.ui.component.field.CurrencyWithAmountField
@@ -29,7 +29,7 @@ fun CurrencyConversionSection(
         resultCallback: (String?) -> Unit
     ) -> Unit,
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     CurrencyConversionSectionContent(
         modifier = modifier,
@@ -71,44 +71,13 @@ fun CurrencyConversionSectionContent(
 
             SpacerVertMedium()
 
-            CurrencyWithAmountField(
-                amount = uiState.convertAmountFrom,
-                currencyCode = uiState.convertCurrencyFrom,
-                onAmountChanged = onConvertAmountFromChanged,
-                onCurrencySelectionClick = {
-                    onNavigateToCurrencySelection(
-                        uiState.convertCurrencyFrom
-                    ) { result ->
-                        result?.let { onConvertCurrencyFromSelected(it) }
-                    }
-                },
-                label = {
-                    Text(text = stringResource(id = R.string.currency_conversion_from_input_label))
-                },
-                error = uiState.convertCurrencyFromErrorMessage?.let {
-                    { Text(text = it) }
-                }
-            )
-
-            SpacerVertMedium()
-
-            CurrencyWithAmountField(
-                amount = uiState.convertAmountTo,
-                currencyCode = uiState.convertCurrencyTo,
-                onAmountChanged = onConvertAmountToChanged,
-                onCurrencySelectionClick = {
-                    onNavigateToCurrencySelection(
-                        uiState.convertCurrencyTo
-                    ) { result ->
-                        result?.let { onConvertCurrencyToSelected(it) }
-                    }
-                },
-                label = {
-                    Text(text = stringResource(id = R.string.currency_conversion_to_input_label))
-                },
-                error = uiState.convertCurrencyToErrorMessage?.let {
-                    { Text(text = it) }
-                }
+            ConversionFromFields(
+                uiState = uiState,
+                onConvertAmountFromChanged = onConvertAmountFromChanged,
+                onNavigateToCurrencySelection = onNavigateToCurrencySelection,
+                onConvertCurrencyFromSelected = onConvertCurrencyFromSelected,
+                onConvertAmountToChanged = onConvertAmountToChanged,
+                onConvertCurrencyToSelected = onConvertCurrencyToSelected
             )
 
             if (uiState.conversionErrorMessage != null) {
@@ -125,15 +94,70 @@ fun CurrencyConversionSectionContent(
     }
 }
 
+@Composable
+private fun ConversionFromFields(
+    uiState: CurrencyConversionUiState,
+    onConvertAmountFromChanged: (DecimalTextFieldValue) -> Unit,
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
+    onConvertCurrencyFromSelected: (String) -> Unit,
+    onConvertAmountToChanged: (DecimalTextFieldValue) -> Unit,
+    onConvertCurrencyToSelected: (String) -> Unit
+) {
+    Column {
+        CurrencyWithAmountField(
+            amount = uiState.convertAmountFrom,
+            currencyCode = uiState.convertCurrencyFrom,
+            onAmountChanged = onConvertAmountFromChanged,
+            onCurrencySelectionClick = {
+                onNavigateToCurrencySelection(
+                    uiState.convertCurrencyFrom
+                ) { result ->
+                    result?.let { onConvertCurrencyFromSelected(it) }
+                }
+            },
+            label = {
+                Text(text = stringResource(id = R.string.currency_conversion_from_input_label))
+            },
+            error = uiState.convertCurrencyFromErrorMessage?.let {
+                { Text(text = it) }
+            }
+        )
+
+        SpacerVertMedium()
+
+        CurrencyWithAmountField(
+            amount = uiState.convertAmountTo,
+            currencyCode = uiState.convertCurrencyTo,
+            onAmountChanged = onConvertAmountToChanged,
+            onCurrencySelectionClick = {
+                onNavigateToCurrencySelection(
+                    uiState.convertCurrencyTo
+                ) { result ->
+                    result?.let { onConvertCurrencyToSelected(it) }
+                }
+            },
+            label = {
+                Text(text = stringResource(id = R.string.currency_conversion_to_input_label))
+            },
+            error = uiState.convertCurrencyToErrorMessage?.let {
+                { Text(text = it) }
+            }
+        )
+    }
+}
+
 @Preview
 @Composable
 fun CurrencyConversionSectionContentPreviewLight() {
     ExchangeRatesTheme {
         CurrencyConversionSectionContent(
             uiState = CurrencyConversionUiState(
-                convertAmountFrom = DecimalTextFieldValue(TextFieldValue("1.0"), 1.0),
+                convertAmountFrom = DecimalTextFieldValue(TextFieldValue("1.0"), number = 1.0),
                 convertCurrencyFrom = "EUR",
-                convertAmountTo = DecimalTextFieldValue(TextFieldValue("1.2"), 1.2),
+                convertAmountTo = DecimalTextFieldValue(TextFieldValue("1.2"), number = 1.2),
                 convertCurrencyTo = "USD",
                 convertCurrencyFromErrorMessage = null,
                 convertCurrencyToErrorMessage = null,
@@ -154,9 +178,9 @@ fun CurrencyConversionSectionContentPreviewDark() {
     ExchangeRatesTheme(darkTheme = true) {
         CurrencyConversionSectionContent(
             uiState = CurrencyConversionUiState(
-                convertAmountFrom = DecimalTextFieldValue(TextFieldValue("1.0"), 1.0),
+                convertAmountFrom = DecimalTextFieldValue(TextFieldValue("1.0"), number = 1.0),
                 convertCurrencyFrom = "EUR",
-                convertAmountTo = DecimalTextFieldValue(TextFieldValue("1.2"), 1.2),
+                convertAmountTo = DecimalTextFieldValue(TextFieldValue("1.2"), number = 1.2),
                 convertCurrencyTo = "USD",
                 convertCurrencyFromErrorMessage = null,
                 convertCurrencyToErrorMessage = null,

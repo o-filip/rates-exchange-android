@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.core.extensions.collectIn
-import com.ofilip.exchange_rates.domain.useCase.GetCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetCurrencyUseCase
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
