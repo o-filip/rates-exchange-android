@@ -1,6 +1,6 @@
-import java.util.Properties
-import com.android.builder.model.BuildType
 import com.android.build.gradle.internal.dsl.DefaultConfig
+import com.android.builder.model.BuildType
+import java.util.Properties
 
 
 plugins {
@@ -9,9 +9,10 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
     id("org.jlleitschuh.gradle.ktlint")
-    id("com.google.protobuf") version "0.9.1"
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("com.google.protobuf")
+    id("de.mannodermaus.android-junit5")
     id("io.gitlab.arturbosch.detekt")
+    id("com.google.devtools.ksp")
 }
 
 val getApkName: (BuildType, DefaultConfig) -> String = { buildType, defaultConfig ->
@@ -20,7 +21,7 @@ val getApkName: (BuildType, DefaultConfig) -> String = { buildType, defaultConfi
 }
 
 val localProps = Properties().apply {
-    load(project.rootProject.file("local.properties").inputStream())
+    load(project.rootProject.file("local.properties").takeIf { it.exists() }?.inputStream())
 }
 
 val signingProps: Properties? =
@@ -28,7 +29,7 @@ val signingProps: Properties? =
         Properties().apply { load(it.inputStream()) }
     }
 
-val STRING = "String"
+val string = "String"
 val CURRENCY_BEACON_API_KEY = "CURRENCY_BEACON_API_KEY"
 
 android {
@@ -39,8 +40,8 @@ android {
         applicationId = "com.ofilip.exchange_rates"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -51,7 +52,7 @@ android {
         if (currencyBeaconApiKey.isNullOrEmpty()) {
             throw GradleException("Currency Beacon API key is not set in local.properties, check readme.md (installation section) for more info.")
         } else {
-            buildConfigField(STRING, CURRENCY_BEACON_API_KEY, "$currencyBeaconApiKey")
+            buildConfigField(string, CURRENCY_BEACON_API_KEY, currencyBeaconApiKey)
         }
     }
 
@@ -177,6 +178,7 @@ dependencies {
     implementation(libs.yCharts)
     implementation(libs.composeShimmer)
 
+    // Test
     testImplementation(libs.testUnit)
     testImplementation(libs.testJunitJupiterApi)
     testImplementation(libs.testJunitJupiterEngine)
@@ -188,10 +190,14 @@ dependencies {
     testImplementation(libs.testCoroutinesTest)
     testImplementation(libs.jodaTime)
 
+    // Debug
     debugImplementation(libs.debugComposeUiTooling)
     debugImplementation(libs.debugComposeUiManifest)
 
-    kapt(libs.kaptRoomCompiler)
+    // Ksp
+    ksp(libs.kspRoomCompiler)
+
+    // Kapt
     kapt(libs.kaptHiltDaggerCompiler)
     kapt(libs.kaptHiltCompiler)
 }

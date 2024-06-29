@@ -3,13 +3,13 @@ package com.ofilip.exchange_rates.domain.useCase.rate
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.domain.useCase.conversion.ApplyConversionRateToAmountUseCase
-import com.ofilip.exchange_rates.fixtures.toFlowOfFailure
-import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -40,10 +40,10 @@ class GetRatesForOverviewUseCaseImplTest {
         )
 
         mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency }.thenReturn(mockOverviewCurrency.toFlowOfSuccess())
+            onBlocking { overviewBaseCurrency }.thenReturn(flowOf(mockOverviewCurrency))
         }
         mockGetRatesOfAllCurrenciesUseCase.stub {
-            onBlocking { execute() }.thenReturn(mockRates.toFlowOfSuccess())
+            onBlocking { execute() }.thenReturn(flowOf(mockRates))
         }
 
         mockApplyConversionRateToAmountUseCase.stub {
@@ -74,14 +74,14 @@ class GetRatesForOverviewUseCaseImplTest {
             .execute(1.0, 0.8, mockBaseToOverviewCurrencyRate)
         verify(mockApplyConversionRateToAmountUseCase)
             .execute(1.0, 125.5, mockBaseToOverviewCurrencyRate)
-        assertEquals(result.isSuccess, true)
-        assertEquals(result.getOrNull()!![0], CurrencyRate("USD", 1.0))
+
+        assertEquals(result[0], CurrencyRate("USD", 1.0))
         assertEquals(
-            result.getOrNull()!![1],
+            result[1],
             CurrencyRate("GBP", 0.8 * mockBaseToOverviewCurrencyRate)
         )
         assertEquals(
-            result.getOrNull()!![2],
+            result[2],
             CurrencyRate("JPY", 125.5 * mockBaseToOverviewCurrencyRate)
         )
     }
@@ -89,41 +89,44 @@ class GetRatesForOverviewUseCaseImplTest {
     @Test
     fun `execute should return failure when overviewBaseCurrency fails`() = runBlocking {
         // Given
-        val mockError = Exception("Failed to fetch overview base currency")
+        val mockError = RuntimeException("Failed to fetch overview base currency")
 
         mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency }.thenReturn(mockError.toFlowOfFailure())
+            onBlocking { overviewBaseCurrency }.thenThrow(mockError)
         }
 
         // When
-        val result = useCase.execute().first()
+        val thrownException = assertThrows<RuntimeException> {
+            useCase.execute().first()
+        }
 
         // Then
         verify(mockCurrencyRepository).overviewBaseCurrency
-        assertEquals(result.isFailure, true)
-        assertEquals(result.exceptionOrNull(), mockError)
+        assertEquals(thrownException, mockError)
     }
 
     @Test
     fun `execute should return failure when getRatesOfAllCurrenciesUseCase fails`() = runBlocking {
         // Given
         val mockOverviewCurrency = "USD"
-        val mockError = Exception("Failed to fetch currency rates")
+        val mockError = RuntimeException("Failed to fetch currency rates")
 
         mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency }.thenReturn(mockOverviewCurrency.toFlowOfSuccess())
+            onBlocking { overviewBaseCurrency }.thenReturn(flowOf(mockOverviewCurrency))
         }
         mockGetRatesOfAllCurrenciesUseCase.stub {
-            onBlocking { execute() }.thenReturn(mockError.toFlowOfFailure())
+            onBlocking { execute() }.thenThrow(mockError)
         }
 
         // When
-        val result = useCase.execute().first()
+        val thrownException = assertThrows<RuntimeException> {
+            useCase.execute().first()
+        }
 
         // Then
         verify(mockCurrencyRepository).overviewBaseCurrency
         verify(mockGetRatesOfAllCurrenciesUseCase).execute()
-        assertEquals(result.isFailure, true)
-        assertEquals(result.exceptionOrNull(), mockError)
+
+        assertEquals(thrownException.message, mockError.message)
     }
 }

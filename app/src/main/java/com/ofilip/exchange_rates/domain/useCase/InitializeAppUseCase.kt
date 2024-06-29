@@ -7,21 +7,16 @@ import javax.inject.Inject
  * Use case to initialize the app
  */
 interface InitializeAppUseCase {
-    suspend fun execute(): Result<Unit>
+    suspend fun execute()
 }
 
 class InitializeAppUseCaseImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : InitializeAppUseCase {
-    override suspend fun execute(): Result<Unit> =
-        try {
-            if (!currencyRepository.areCurrenciesLoaded().getOrThrow()) {
-                currencyRepository.prefetchCurrencies()
-            } else {
-                Result.success(Unit)
-            }
-        } catch (ex: Exception) {
-            Result.failure(ex)
+    override suspend fun execute() {
+        if (!currencyRepository.areCurrenciesLoaded()) {
+            currencyRepository.prefetchCurrencies()
         }
+    }
 }
 

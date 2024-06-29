@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
@@ -55,7 +56,7 @@ class CurrencyRepositoryImplTest {
             verify(currencyConverter).remoteToEntity(remoteResponse[1])
             verify(currencyConverter).remoteToEntity(remoteResponse[2])
             verify(currencyLocalDataStore).insert(currencyLocalModels)
-            assertEquals(Result.success(Unit), result)
+            assertEquals(Unit, result)
         }
 
     @Test
@@ -67,10 +68,12 @@ class CurrencyRepositoryImplTest {
                 onBlocking { getAllCurrencies() } doAnswer { throw exception }
             }
 
-            val result = currencyRepository.prefetchCurrencies()
+            val thrownException = assertThrows<DataError.Unknown> {
+                currencyRepository.prefetchCurrencies()
+            }
 
             verify(remoteDataStore).getAllCurrencies()
-            assertEquals(Result.failure<Void>(exception), result)
+            assertEquals(exception, thrownException)
         }
 
     @Test
@@ -86,7 +89,7 @@ class CurrencyRepositoryImplTest {
         val result = currencyRepository.getCurrencies(textQuery, onlyFavorites).first()
 
         verify(currencyLocalDataStore).getAll(textQuery, onlyFavorites)
-        assertEquals(Result.success(currencyLocalModels), result)
+        assertEquals(currencyLocalModels, result)
     }
 
     @Test
@@ -98,8 +101,7 @@ class CurrencyRepositoryImplTest {
 
             val result = currencyRepository.areCurrenciesLoaded()
 
-            assertEquals(true, result.isSuccess)
-            assertEquals(true, result.getOrNull())
+            assertEquals(true, result)
         }
 
     @Test
@@ -112,8 +114,7 @@ class CurrencyRepositoryImplTest {
             val result = currencyRepository.areCurrenciesLoaded()
 
             verify(currencyLocalDataStore).getAll()
-            assertEquals(true, result.isSuccess)
-            assertEquals(false, result.getOrNull())
+            assertEquals(false, result)
         }
 
     @Test
@@ -154,8 +155,7 @@ class CurrencyRepositoryImplTest {
 
         val result = currencyRepository.overviewBaseCurrency.first()
 
-        assertEquals(true, result.isSuccess)
-        assertEquals(currency, result.getOrNull())
+        assertEquals(currency, result)
     }
 
     @Test
@@ -166,8 +166,7 @@ class CurrencyRepositoryImplTest {
 
         val result = currencyRepository.conversionCurrencyFrom.first()
 
-        assertEquals(true, result.isSuccess)
-        assertEquals(currency, result.getOrNull())
+        assertEquals(currency, result)
     }
 
     @Test
@@ -178,8 +177,7 @@ class CurrencyRepositoryImplTest {
 
         val result = currencyRepository.conversionCurrencyTo.first()
 
-        assertEquals(true, result.isSuccess)
-        assertEquals(currency, result.getOrNull())
+        assertEquals(currency, result)
     }
 
 }

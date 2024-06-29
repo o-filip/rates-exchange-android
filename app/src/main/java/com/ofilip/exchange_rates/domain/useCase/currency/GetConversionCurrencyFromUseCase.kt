@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.Flow
  * Use case to get the currency that the conversion is made from used used in main conversion screen
  */
 interface GetConversionCurrencyFromUseCase {
-    fun execute(): Flow<Result<String>>
+    fun execute(): Flow<String>
 }
 
 class GetConversionCurrencyFromUseCaseImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : GetConversionCurrencyFromUseCase {
-    override fun execute(): Flow<Result<String>> = currencyRepository.conversionCurrencyFrom
+    override fun execute(): Flow<String> = currencyRepository.conversionCurrencyFrom
 }
 

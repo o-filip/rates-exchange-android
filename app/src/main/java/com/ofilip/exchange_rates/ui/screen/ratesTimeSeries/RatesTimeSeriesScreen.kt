@@ -37,10 +37,6 @@ fun RatesTimeSeriesScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(Unit) {
-        viewModel.init()
-    }
-
     RatesTimeSeriesScreenContent(
         modifier = modifier,
         uiState = uiState,

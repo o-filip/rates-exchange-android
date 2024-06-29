@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 class UserPreferencesRepositoryImpl @Inject constructor(
     private val appProtoStore: UserPreferencesLocalDataStore
 ) : BaseRepository(), UserPreferencesRepository {
-    override val darkTheme: Flow<Boolean?> get() = repoFetch {  appProtoStore.darkTheme }
+    override val isDarkTheme: Flow<Boolean?> get() = repoFetch { appProtoStore.darkTheme }
 
-    override suspend fun setDarkTheme(darkTheme: Boolean): Result<Unit> = repoDoNoResult {
-        appProtoStore.setDarkTheme(darkTheme)
+    override suspend fun setIsDarkTheme(isDarkTheme: Boolean) = repoDoWithoutResult {
+        appProtoStore.setDarkTheme(isDarkTheme)
     }
 }

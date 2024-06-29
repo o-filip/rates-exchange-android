@@ -11,6 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.retry
 
 data class CurrencyDetailUiState(
     val isLoading: Boolean = false,
@@ -21,7 +23,7 @@ data class CurrencyDetailUiState(
 @HiltViewModel
 class CurrencyDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getCurrencyUseCase: GetCurrencyUseCase,
+    getCurrencyUseCase: GetCurrencyUseCase,
     private val uiErrorConverter: UiErrorConverter,
 ) : ViewModel() {
     private val currencyCode: String = checkNotNull(savedStateHandle["currencyCode"])
@@ -29,26 +31,24 @@ class CurrencyDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CurrencyDetailUiState())
     val uiState: StateFlow<CurrencyDetailUiState> get() = _uiState
 
-    fun init() {
+    init {
         _uiState.value = uiState.value.copy(
             isLoading = true,
             errorMessage = null
         )
-        getCurrencyUseCase.execute(currencyCode).collectIn(viewModelScope) { currency ->
-            currency
-                .onSuccess {
-                    _uiState.value = uiState.value.copy(
-                        currency = it,
+        getCurrencyUseCase.execute(currencyCode)
+            .catch {
+                _uiState.value =
+                    uiState.value.copy(
+                        errorMessage = uiErrorConverter.convertToText(it),
                         isLoading = false
                     )
-                }.onFailure {
-                    _uiState.value =
-                        uiState.value.copy(
-                            errorMessage = uiErrorConverter.convertToText(it),
-                            isLoading = false
-                        )
-                }
-
-        }
+            }
+            .collectIn(viewModelScope) { currency ->
+                _uiState.value = uiState.value.copy(
+                    currency = currency,
+                    isLoading = false
+                )
+            }
     }
 }

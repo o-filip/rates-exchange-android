@@ -13,17 +13,15 @@ import kotlinx.coroutines.flow.map
  */
 abstract class GetCurrencyUseCase {
 
-    abstract fun execute(currencyCode: String): Flow<Result<Currency>>
+    abstract fun execute(currencyCode: String): Flow<Currency>
 }
 
 class GetCurrencyUseCaseImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : GetCurrencyUseCase() {
-    override fun execute(currencyCode: String): Flow<Result<Currency>> =
-        currencyRepository.getCurrency(currencyCode).map {
-            it.mapCatching { currency ->
-                currency ?: throw DomainError.CurrencyNotFound(currencyCode)
-            }
+    override fun execute(currencyCode: String): Flow<Currency> =
+        currencyRepository.getCurrency(currencyCode).map { currency ->
+            currency ?: throw DomainError.CurrencyNotFound(currencyCode)
         }
 
 }

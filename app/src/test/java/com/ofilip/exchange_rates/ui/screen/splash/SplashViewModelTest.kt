@@ -20,6 +20,7 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.stub
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 
@@ -28,13 +29,15 @@ class SplashViewModelTest {
     private val mockInitializeAppUseCase: InitializeAppUseCase = mock()
     private val mockUiErrorConverter: UiErrorConverter = mock()
     private val testCoroutineScope: TestDispatcher = StandardTestDispatcher()
-    private lateinit var viewModel: SplashViewModel
+
+    private fun createViewModel() = SplashViewModel(
+        initializeAppUseCase = mockInitializeAppUseCase,
+        uiErrorConverter = mockUiErrorConverter
+    )
 
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testCoroutineScope)
-        viewModel =
-            SplashViewModel(mockInitializeAppUseCase, mockUiErrorConverter)
     }
 
     @AfterEach
@@ -45,9 +48,8 @@ class SplashViewModelTest {
     @Test
     fun `initApp succeeds when initialization use case returns success`() = runTest {
         // Given
-        val successResult = Result.success(Unit)
         mockInitializeAppUseCase.stub {
-            onBlocking { execute() } doReturn successResult
+            onBlocking { execute() } doReturn Unit
         }
         val expectedState = SplashUiState(
             isLoading = false,
@@ -56,7 +58,7 @@ class SplashViewModelTest {
         )
 
         // When
-        viewModel.initApp()
+        val viewModel = createViewModel()
         advanceUntilIdle()
 
         // Then
@@ -68,9 +70,9 @@ class SplashViewModelTest {
     fun `initApp fails when initialization use case returns failure`() = runTest {
         // Given
         val errorMessage = "Error message"
-        val exception = Exception(errorMessage)
+        val exception = RuntimeException(errorMessage)
         mockInitializeAppUseCase.stub {
-            onBlocking { execute() } doReturn Result.failure(exception)
+            onBlocking { execute() }.thenThrow(exception)
         }
         mockUiErrorConverter.stub {
             on { convertToText(any(), anyOrNull()) } doReturn errorMessage
@@ -83,7 +85,7 @@ class SplashViewModelTest {
         )
 
         // When
-        viewModel.initApp()
+        val viewModel = createViewModel()
         advanceUntilIdle()
 
         // Then
@@ -96,16 +98,17 @@ class SplashViewModelTest {
 
     @Test
     fun `retry will call initialization use case again`() = runTest {
-        val successResult = Result.success(Unit)
+
         mockInitializeAppUseCase.stub {
-            onBlocking { execute() } doReturn successResult
+            onBlocking { execute() } doReturn Unit
         }
 
         // When
+        val viewModel = createViewModel()
         viewModel.retry()
         advanceUntilIdle()
 
         // Then
-        verify(mockInitializeAppUseCase).execute()
+        verify(mockInitializeAppUseCase, times(2)).execute()
     }
 }

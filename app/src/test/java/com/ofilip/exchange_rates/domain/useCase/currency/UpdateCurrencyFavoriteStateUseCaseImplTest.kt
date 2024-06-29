@@ -3,7 +3,9 @@ package com.ofilip.exchange_rates.domain.useCase.currency
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import com.ofilip.exchange_rates.fixtures.Fixtures
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
@@ -28,39 +30,40 @@ class UpdateCurrencyFavoriteStateUseCaseImplTest {
                     currency,
                     isFavorite
                 )
-            } doReturn (Result.success(Unit))
+            } doReturn (Unit)
         }
 
         // When
-        val result = useCase.execute(currency, isFavorite)
+        useCase.execute(currency, isFavorite)
 
         // Then
         verify(mockCurrencyRepository).updateCurrencyFavoriteState(currency, isFavorite)
-        assert(result.isSuccess)
     }
 
     @Test
-    fun `execute should return failure when currency repository returns error result`() = runBlocking {
-        // Given
-        val currency = Fixtures.currencies.first()
-        val isFavorite = true
-        val exception = Exception("Failed to update currency favorite state")
+    fun `execute should return failure when currency repository returns error result`() =
+        runBlocking {
+            // Given
+            val currency = Fixtures.currencies.first()
+            val isFavorite = true
+            val exception = RuntimeException("Failed to update currency favorite state")
 
-        mockCurrencyRepository.stub {
-            onBlocking {
-                updateCurrencyFavoriteState(
-                    currency,
-                    isFavorite
-                )
-            } doReturn (Result.failure(exception))
+            mockCurrencyRepository.stub {
+                onBlocking {
+                    updateCurrencyFavoriteState(
+                        currency,
+                        isFavorite
+                    )
+                }.thenThrow(exception)
+            }
+
+            // When
+            val thrownException = assertThrows<RuntimeException> {
+                useCase.execute(currency, isFavorite)
+            }
+
+            // Then
+            verify(mockCurrencyRepository).updateCurrencyFavoriteState(currency, isFavorite)
+            assertEquals(exception, thrownException)
         }
-
-        // When
-        val result = useCase.execute(currency, isFavorite)
-
-        // Then
-        verify(mockCurrencyRepository).updateCurrencyFavoriteState(currency, isFavorite)
-        assert(result.isFailure)
-
-    }
 }

@@ -56,10 +56,6 @@ fun CurrencyDetailScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(Unit) {
-        viewModel.init()
-    }
-
     CurrencyDetailScreenContent(
         modifier = modifier,
         uiState = uiState,

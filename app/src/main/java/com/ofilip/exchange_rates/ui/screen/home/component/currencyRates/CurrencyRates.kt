@@ -47,10 +47,6 @@ fun CurrencyRatesSection(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(Unit) {
-        viewModel.init()
-    }
-
     CurrencyRatesSectionContent(
         modifier = modifier,
         uiState = uiState,

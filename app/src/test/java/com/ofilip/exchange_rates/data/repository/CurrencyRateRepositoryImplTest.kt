@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -89,7 +90,7 @@ class CurrencyRateRepositoryImplTest {
             verify(currencyRateLocalDataStore).deleteAll()
             verify(currencyRateLocalDataStore).insert(localRates)
             verify(currencyRateLocalDataStore).getAll()
-            assertEquals(Result.success(localRates), result)
+            assertEquals(localRates, result)
         }
 
     @Test
@@ -112,14 +113,14 @@ class CurrencyRateRepositoryImplTest {
         // Then
         verify(currencyRateLocalDataStore).getAll()
         verify(connectivityStatusHelper).isConnected
-        assertEquals(Result.success(localRates), result)
+        assertEquals(localRates, result)
     }
 
     @Test
     fun `getRates should return failure when remote data store throws an exception`() =
         runBlocking {
             // Given
-            val exception = Exception()
+            val exception = DataError.Unknown(Exception())
             val connectivityStatusFlow = MutableStateFlow(true)
             val currencyCodes = Fixtures.currencyCodes
             connectivityStatusHelper.stub {
@@ -135,12 +136,14 @@ class CurrencyRateRepositoryImplTest {
             }
 
             // When
-            val result: Result<List<CurrencyRate>> = repository.getRates(currencyCodes).first()
+            val thrownException = assertThrows<DataError.Unknown> {
+                repository.getRates(currencyCodes).first()
+            }
 
             // Then
             verify(connectivityStatusHelper).isConnected
             verify(remoteDataStore).getLatestRates(baseCurrencyCode, currencyCodes)
-            assertEquals(Result.failure<List<CurrencyRate>>(DataError.Unknown(exception)), result)
+            assertEquals(exception, thrownException)
         }
 
     @Test
@@ -166,6 +169,6 @@ class CurrencyRateRepositoryImplTest {
             // Then
             verify(connectivityStatusHelper).isConnected
             verify(currencyRateLocalDataStore).getAll()
-            assertEquals(Result.success(localRates), result)
+            assertEquals(localRates, result)
         }
 }

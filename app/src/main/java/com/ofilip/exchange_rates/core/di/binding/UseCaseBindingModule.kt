@@ -32,6 +32,8 @@ import com.ofilip.exchange_rates.domain.useCase.rate.GetRatesForOverviewUseCase
 import com.ofilip.exchange_rates.domain.useCase.rate.GetRatesForOverviewUseCaseImpl
 import com.ofilip.exchange_rates.domain.useCase.rateTimeSeries.GetRatesTimeSeriesUseCase
 import com.ofilip.exchange_rates.domain.useCase.rateTimeSeries.GetRatesTimeSeriesUseCaseImpl
+import com.ofilip.exchange_rates.ui.util.CurrencyConversionProcessor
+import com.ofilip.exchange_rates.ui.util.CurrencyConversionProcessorImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -119,4 +121,9 @@ abstract class UseCaseBindingModule {
     abstract fun bindGetConversionCurrencyToUseCase(
         useCaseImpl: GetConversionCurrencyToUseCaseImpl
     ): GetConversionCurrencyToUseCase
+
+    @Binds
+    abstract fun bindCurrencyConversionProcessor(
+        useCaseImpl: CurrencyConversionProcessorImpl
+    ): CurrencyConversionProcessor
 }

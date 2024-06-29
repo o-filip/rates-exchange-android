@@ -8,6 +8,7 @@ import com.ofilip.exchange_rates.domain.useCase.InitializeAppUseCase
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,37 +28,37 @@ class SplashViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SplashUiState())
     val uiState: StateFlow<SplashUiState> get() = _uiState
 
-    fun initApp() {
+    init {
+        initApp()
+    }
+
+    private fun initApp() {
         if (_uiState.value.isLoading) return
 
-        viewModelScope.launch {
+        viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+            _uiState.value = _uiState.value.copy(
+                errorMessage = uiErrorConverter.convertToText(throwable, overrideErrors = { error ->
+                    // Show full explanation for unauthorized error
+                    if (error is DataError.Unauthorized) {
+                        R.string.error_data_unauthorized_full_explanation
+                    } else {
+                        null
+                    }
+                }),
+                isLoading = false
+            )
+        }) {
             _uiState.value = uiState.value.copy(
                 isLoading = true,
                 errorMessage = null
             )
 
             initializeAppUseCase.execute()
-                .onSuccess {
-                    _uiState.value = uiState.value.copy(
-                        isLoading = false,
-                        initializedSuccessfully = true,
 
-                        )
-                }
-                .onFailure {
-                    _uiState.value = uiState.value.copy(
-                        isLoading = false,
-                        errorMessage = uiErrorConverter.convertToText(
-                            it,
-                            overrideErrors = { error ->
-                                if (error is DataError.Unauthorized) {
-                                    R.string.error_data_unauthorized_full_explanation
-                                } else {
-                                    null
-                                }
-                            })
-                    )
-                }
+            _uiState.value = uiState.value.copy(
+                isLoading = false,
+                initializedSuccessfully = true,
+            )
         }
     }
 

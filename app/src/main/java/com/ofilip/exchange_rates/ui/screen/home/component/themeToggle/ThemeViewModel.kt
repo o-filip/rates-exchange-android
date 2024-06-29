@@ -11,11 +11,11 @@ import javax.inject.Inject
 class ThemeViewModel @Inject constructor(
     private val appPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
-    val darkTheme = appPreferencesRepository.darkTheme
+    val isDarkTheme = appPreferencesRepository.isDarkTheme
 
     fun setDarkTheme(darkTheme: Boolean) {
         viewModelScope.launch {
-            appPreferencesRepository.setDarkTheme(darkTheme)
+            appPreferencesRepository.setIsDarkTheme(darkTheme)
         }
     }
 }

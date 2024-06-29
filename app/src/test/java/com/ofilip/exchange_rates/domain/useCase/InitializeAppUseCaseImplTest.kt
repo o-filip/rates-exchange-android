@@ -4,6 +4,7 @@ import com.ofilip.exchange_rates.data.repository.CurrencyRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.kotlin.doReturn
@@ -19,7 +20,7 @@ class InitializeAppUseCaseImplTest {
     fun `execute should return success when currencies are already loaded`() = runBlocking {
         // Given
         mockCurrencyRepository.stub {
-            onBlocking { areCurrenciesLoaded() } doReturn Result.success(true)
+            onBlocking { areCurrenciesLoaded() } doReturn true
         }
 
         // When
@@ -28,41 +29,44 @@ class InitializeAppUseCaseImplTest {
         // Then
         verify(mockCurrencyRepository).areCurrenciesLoaded()
         verify(mockCurrencyRepository, never()).prefetchCurrencies()
-        assertEquals(Result.success(Unit), result)
+        assertEquals(Unit, result)
     }
 
     @Test
-    fun `execute should return success and prefetch currencies when currencies are not loaded`() = runBlocking {
-        // Given
-        mockCurrencyRepository.stub {
-            onBlocking { areCurrenciesLoaded() } doReturn Result.success(false)
-            onBlocking { prefetchCurrencies() } doReturn Result.success(Unit)
+    fun `execute should return success and prefetch currencies when currencies are not loaded`() =
+        runBlocking {
+            // Given
+            mockCurrencyRepository.stub {
+                onBlocking { areCurrenciesLoaded() } doReturn false
+                onBlocking { prefetchCurrencies() } doReturn Unit
+            }
+
+            // When
+            val result = useCase.execute()
+
+            // Then
+            verify(mockCurrencyRepository).areCurrenciesLoaded()
+            verify(mockCurrencyRepository).prefetchCurrencies()
+            assertEquals(Unit, result)
         }
-
-        // When
-        val result = useCase.execute()
-
-        // Then
-        verify(mockCurrencyRepository).areCurrenciesLoaded()
-        verify(mockCurrencyRepository).prefetchCurrencies()
-        assertEquals(Result.success(Unit), result)
-    }
 
     @Test
     fun `execute should return failure when an exception occurs`() = runBlocking {
         // Given
-        val mockException = Exception("Failed to load currencies")
+        val mockException = RuntimeException("Failed to load currencies")
 
         mockCurrencyRepository.stub {
-            onBlocking { areCurrenciesLoaded() } doReturn Result.failure(mockException)
+            onBlocking { areCurrenciesLoaded() }.thenThrow(mockException)
         }
 
         // When
-        val result = useCase.execute()
+        val thrownException = assertThrows<RuntimeException> {
+            useCase.execute()
+        }
 
         // Then
         verify(mockCurrencyRepository).areCurrenciesLoaded()
         verify(mockCurrencyRepository, never()).prefetchCurrencies()
-        assertEquals(Result.failure<Void?>(mockException), result)
+        assertEquals(mockException, thrownException)
     }
 }

@@ -3,7 +3,7 @@ package com.ofilip.exchange_rates.core.error
 sealed class DataError @JvmOverloads constructor(
     override val message: String? = null,
     override val cause: Throwable? = null
-) : BaseError() {
+) : BaseException() {
     data object NoInternetConnection : DataError() {
         private fun readResolve(): Any = NoInternetConnection
     }
@@ -31,6 +31,11 @@ sealed class DataError @JvmOverloads constructor(
     data object RequestLimitReached: DataError() {
         private fun readResolve(): Any = RequestLimitReached
     }
+
+    data class LocalDataError @JvmOverloads constructor(
+        override val cause: Throwable? = null,
+        val data: Any? = null
+    ) : DataError()
 
     data class Unknown @JvmOverloads constructor(
         override val cause: Throwable? = null,

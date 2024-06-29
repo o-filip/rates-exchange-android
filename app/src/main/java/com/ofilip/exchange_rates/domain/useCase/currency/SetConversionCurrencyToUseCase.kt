@@ -7,13 +7,13 @@ import javax.inject.Inject
  * Use case to set and store the currency code to convert to used in main conversion screen
  */
 interface SetConversionCurrencyToUseCase {
-    suspend fun execute(currency: String): Result<Unit>
+    suspend fun execute(currency: String)
 }
 
 class SetConversionCurrencyToUseCaseImpl @Inject constructor(
     private val currencyRepository: CurrencyRepository
 ) : SetConversionCurrencyToUseCase {
-    override suspend fun execute(currency: String): Result<Unit> =
+    override suspend fun execute(currency: String) =
         currencyRepository.setConversionCurrencyTo(currency)
 
 }

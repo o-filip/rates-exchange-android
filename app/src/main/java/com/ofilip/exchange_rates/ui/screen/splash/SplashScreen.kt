@@ -41,14 +41,10 @@ fun SplashScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.initApp()
-    }
-
     SplashScreenContent(
         modifier = modifier,
         uiState = uiState,
-        onRetry = viewModel::initApp
+        onRetry = viewModel::retry
     )
 }
 

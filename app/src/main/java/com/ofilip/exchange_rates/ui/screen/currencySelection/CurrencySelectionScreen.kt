@@ -1,5 +1,6 @@
 package com.ofilip.exchange_rates.ui.screen.currencySelection
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -58,10 +59,6 @@ fun CurrencySelectionScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.init()
-    }
-
     CurrencySelectionScreenContent(modifier = modifier,
         uiState = uiState,
         onNavigateBack = { onNavigateBack(null) },
@@ -71,6 +68,7 @@ fun CurrencySelectionScreen(
         onCurrencyLikeToggled = { viewModel.toggleCurrencyLike(it) })
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CurrencySelectionScreenContent(
     modifier: Modifier = Modifier,
@@ -112,8 +110,10 @@ fun CurrencySelectionScreenContent(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(
                     uiState.currencies,
+                    key = { currency -> currency.currencyCode }
                 ) { currency ->
-                    CurrencySelectionListItem(modifier = Modifier.padding(vertical = 4.dp),
+                    CurrencySelectionListItem(
+                        modifier = Modifier.padding(vertical = 4.dp).animateItemPlacement(),
                         currency = currency,
                         isSelected = uiState.selectedCurrencies?.contains(currency.currencyCode)
                             ?: false,
