@@ -20,13 +20,13 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ofilip.exchange_rates.R
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.ui.component.button.CurrencySelectionButton
@@ -39,10 +39,13 @@ import com.ofilip.exchange_rates.ui.util.Dimens
 fun CurrencyRatesSection(
     modifier: Modifier = Modifier,
     viewModel: CurrencyRatesViewModel = hiltViewModel(),
-    onNavigateToCurrencySelection: () -> Unit,
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
     onNavigateToCurrencyDetail: (currencyCode: String) -> Unit,
 ) {
-    val uiState = viewModel.uiState.collectAsState().value
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
         viewModel.init()
@@ -53,7 +56,8 @@ fun CurrencyRatesSection(
         uiState = uiState,
         onNavigateToCurrencySelection = onNavigateToCurrencySelection,
         onNavigateToCurrencyDetail = onNavigateToCurrencyDetail,
-        refreshData = viewModel::refreshData
+        refreshData = viewModel::refreshData,
+        onBaseCurrencySelected = viewModel::onBaseCurrencySelected
     )
 }
 
@@ -62,9 +66,13 @@ fun CurrencyRatesSection(
 fun CurrencyRatesSectionContent(
     modifier: Modifier = Modifier,
     uiState: CurrencyRatesUiState,
-    onNavigateToCurrencySelection: () -> Unit,
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
     onNavigateToCurrencyDetail: (currencyCode: String) -> Unit,
     refreshData: () -> Unit,
+    onBaseCurrencySelected: (String) -> Unit,
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.ratesLoading,
@@ -88,6 +96,7 @@ fun CurrencyRatesSectionContent(
                 baseCurrency = uiState.overviewCurrency,
                 baseCurrencyErrorMessage = uiState.baseCurrencyErrorMessage,
                 ratesLoadErrorMessage = uiState.ratesLoadErrorMessage,
+                onBaseCurrencySelected = onBaseCurrencySelected
             )
         }
 
@@ -104,20 +113,26 @@ fun LazyListScope.currencyRatesSection(
     baseCurrencyErrorMessage: String?,
     ratesLoadErrorMessage: String?,
     rates: List<CurrencyRate>,
-    onNavigateToCurrencySelection: () -> Unit,
-    onNavigateToCurrencyDetail: (currencyCode: String) -> Unit
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
+    onNavigateToCurrencyDetail: (currencyCode: String) -> Unit,
+    onBaseCurrencySelected: (String) -> Unit,
 ) {
     item {
         CurrencyRatesSectionHeader(
-            baseCurrency =  baseCurrency,
+            baseCurrency = baseCurrency,
             baseCurrencyErrorMessage = baseCurrencyErrorMessage,
             ratesLoadErrorMessage = ratesLoadErrorMessage,
             onNavigateToCurrencySelection = onNavigateToCurrencySelection,
+            onBaseCurrencySelected = onBaseCurrencySelected
         )
     }
 
     items(
         rates,
+        key = { it.currency },
         itemContent = { currencyRate ->
             CurrencyRateListItem(
                 currencyRate = currencyRate,
@@ -146,7 +161,11 @@ fun CurrencyRatesSectionHeader(
     baseCurrency: String?,
     baseCurrencyErrorMessage: String?,
     ratesLoadErrorMessage: String?,
-    onNavigateToCurrencySelection: () -> Unit
+    onNavigateToCurrencySelection: (
+        preselectedCurrency: String?,
+        resultCallback: (String?) -> Unit
+    ) -> Unit,
+    onBaseCurrencySelected: (String) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -162,33 +181,34 @@ fun CurrencyRatesSectionHeader(
                 .padding(top = Dimens.cardVerticalPadding())
                 .padding(bottom = Dimens.spacingLarge())
         ) {
+            // Headline
             Text(
                 text = stringResource(id = R.string.currency_rates_header),
                 style = MaterialTheme.typography.h3
             )
-
             SpacerVertMedium()
-
-            if (baseCurrencyErrorMessage != null) {
+            // Error message
+            if (ratesLoadErrorMessage != null || baseCurrencyErrorMessage != null) {
                 Text(
-                    text = baseCurrencyErrorMessage,
+                    text = when {
+                        ratesLoadErrorMessage != null -> ratesLoadErrorMessage
+                        baseCurrencyErrorMessage != null -> baseCurrencyErrorMessage
+                        else -> "$ratesLoadErrorMessage\n$baseCurrencyErrorMessage"
+                    },
                     style = MaterialTheme.typography.body1
                 )
 
                 SpacerVertMedium()
             }
-
-            if (ratesLoadErrorMessage != null) {
-                Text(
-                    text = ratesLoadErrorMessage,
-                    style = MaterialTheme.typography.body1
-                )
-
-                SpacerVertMedium()
-            }
-
+            // Base currency selection button
             CurrencySelectionButton(
-                onClick = onNavigateToCurrencySelection,
+                onClick = {
+                    onNavigateToCurrencySelection(
+                        baseCurrency
+                    ) { result ->
+                        result?.let { onBaseCurrencySelected(it) }
+                    }
+                },
                 currencyCode = baseCurrency,
                 prefixText = "${stringResource(id = R.string.currency_rates_base_currency_button_prefix)}: ",
             )
@@ -204,16 +224,17 @@ fun CurrencyRatesSectionContentPreviewLight() {
         CurrencyRatesSectionContent(
             uiState = CurrencyRatesUiState(
                 rates = listOf(
-                    CurrencyRate("EUR", 1.0),
-                    CurrencyRate("USD", 1.2),
-                    CurrencyRate("GBP", 0.9),
+                    CurrencyRate("EUR", rate = 1.0),
+                    CurrencyRate("USD", rate = 1.2),
+                    CurrencyRate("GBP", rate = 0.9),
                 ),
                 overviewCurrency = "EUR",
                 ratesLoading = false
             ),
-            onNavigateToCurrencySelection = {},
+            onNavigateToCurrencySelection = { _, _ -> },
             onNavigateToCurrencyDetail = {},
-            refreshData = {}
+            refreshData = {},
+            onBaseCurrencySelected = {}
         )
     }
 
@@ -226,16 +247,17 @@ fun CurrencyRatesSectionContentPreviewDark() {
         CurrencyRatesSectionContent(
             uiState = CurrencyRatesUiState(
                 rates = listOf(
-                    CurrencyRate("EUR", 1.0),
-                    CurrencyRate("USD", 1.2),
-                    CurrencyRate("GBP", 0.9),
+                    CurrencyRate("EUR", rate = 1.0),
+                    CurrencyRate("USD", rate = 1.2),
+                    CurrencyRate("GBP", rate = 0.9),
                 ),
                 overviewCurrency = "EUR",
                 ratesLoading = false
             ),
-            onNavigateToCurrencySelection = {},
+            onNavigateToCurrencySelection = { _, _ -> },
             onNavigateToCurrencyDetail = {},
-            refreshData = {}
+            refreshData = {},
+            onBaseCurrencySelected = {}
         )
     }
 }

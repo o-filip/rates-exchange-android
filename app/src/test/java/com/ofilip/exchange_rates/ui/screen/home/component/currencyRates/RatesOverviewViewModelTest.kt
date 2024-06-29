@@ -1,7 +1,9 @@
 package com.ofilip.exchange_rates.ui.screen.home.component.currencyRates
 
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
-import com.ofilip.exchange_rates.domain.useCase.GetRatesForOverviewUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetOverviewBaseCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.SetOverviewBaseCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.rate.GetRatesForOverviewUseCase
 import com.ofilip.exchange_rates.fixtures.Fixtures
 import com.ofilip.exchange_rates.fixtures.toFlowOfFailure
 import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess
@@ -28,7 +30,8 @@ class RatesOverviewViewModelTest {
     private lateinit var viewModel: CurrencyRatesViewModel
 
     private val mockGetOverviewRatesUseCase: GetRatesForOverviewUseCase = mock()
-    private val mockCurrencyRepository: CurrencyRepository = mock()
+    private val mockGetOverviewBaseCurrencyUseCase: GetOverviewBaseCurrencyUseCase = mock()
+    private val mockSetOverviewBaseCurrencyUseCase: SetOverviewBaseCurrencyUseCase = mock()
     private val mockUiErrorConverter: UiErrorConverter = mock()
     private val testCoroutineScope: TestDispatcher = StandardTestDispatcher()
 
@@ -38,7 +41,8 @@ class RatesOverviewViewModelTest {
 
         viewModel = CurrencyRatesViewModel(
             getOverviewRatesUseCase = mockGetOverviewRatesUseCase,
-            currencyRepository = mockCurrencyRepository,
+            getOverviewBaseCurrencyUseCase = mockGetOverviewBaseCurrencyUseCase,
+            setOverviewBaseCurrencyUseCase = mockSetOverviewBaseCurrencyUseCase,
             uiErrorConverter = mockUiErrorConverter
         )
     }
@@ -60,8 +64,8 @@ class RatesOverviewViewModelTest {
             ratesLoadErrorMessage = null
         )
 
-        mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency } doReturn mockOverviewCurrency.toFlowOfSuccess()
+        mockGetOverviewBaseCurrencyUseCase.stub {
+            onBlocking { execute() } doReturn mockOverviewCurrency.toFlowOfSuccess()
         }
         mockGetOverviewRatesUseCase.stub {
             onBlocking { execute() } doReturn mockRates.toFlowOfSuccess()
@@ -82,8 +86,8 @@ class RatesOverviewViewModelTest {
         val exception = Exception(errorMessage)
         val mockRates = Fixtures.localRates
 
-        mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency } doReturn exception.toFlowOfFailure()
+        mockGetOverviewBaseCurrencyUseCase.stub {
+            onBlocking { execute() } doReturn exception.toFlowOfFailure()
         }
         mockUiErrorConverter.stub {
             on { convertToText(exception) } doReturn errorMessage
@@ -99,7 +103,7 @@ class RatesOverviewViewModelTest {
         // Then
         verify(mockUiErrorConverter).convertToText(exception)
         verify(mockGetOverviewRatesUseCase).execute()
-        verify(mockCurrencyRepository).overviewBaseCurrency
+        verify(mockGetOverviewBaseCurrencyUseCase).execute()
         assertEquals(errorMessage, viewModel.uiState.value.baseCurrencyErrorMessage)
         assertEquals(mockRates, viewModel.uiState.value.rates)
     }
@@ -111,8 +115,8 @@ class RatesOverviewViewModelTest {
         val exception = Exception(errorMessage)
         val mockBaseCurrency = "USD"
 
-        mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency } doReturn mockBaseCurrency.toFlowOfSuccess()
+        mockGetOverviewBaseCurrencyUseCase.stub {
+            onBlocking { execute() } doReturn mockBaseCurrency.toFlowOfSuccess()
         }
         mockUiErrorConverter.stub {
             on { convertToText(exception) } doReturn errorMessage
@@ -128,7 +132,7 @@ class RatesOverviewViewModelTest {
         // Then
         verify(mockUiErrorConverter).convertToText(exception)
         verify(mockGetOverviewRatesUseCase).execute()
-        verify(mockCurrencyRepository).overviewBaseCurrency
+        verify(mockGetOverviewBaseCurrencyUseCase).execute()
         assertEquals(errorMessage, viewModel.uiState.value.ratesLoadErrorMessage)
         assertEquals(mockBaseCurrency, viewModel.uiState.value.overviewCurrency)
     }
@@ -139,8 +143,8 @@ class RatesOverviewViewModelTest {
         val mockRates = Fixtures.localRates
         val mockOverviewCurrency = "USD"
 
-        mockCurrencyRepository.stub {
-            onBlocking { overviewBaseCurrency } doReturn mockOverviewCurrency.toFlowOfSuccess()
+        mockGetOverviewBaseCurrencyUseCase.stub {
+            onBlocking { execute() } doReturn mockOverviewCurrency.toFlowOfSuccess()
         }
         mockGetOverviewRatesUseCase.stub {
             onBlocking { execute() } doReturn mockRates.toFlowOfSuccess()

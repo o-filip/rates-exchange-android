@@ -11,6 +11,7 @@ It provides users with up-to-date currency exchange rates obtained from the [Cur
 - **Currency Exchange Rates**: The app fetches current currency exchange rates from the [Currency beacon API](https://currencybeacon.com/)  and displays them in a user-friendly list format.
 - **Currency Conversion**: Users can convert between different currencies using the exchange rates provided.
 - **Offline Mode**: The app offers offline functionality using local database, enabling users to access previously fetched exchange rates and perform currency conversions without an internet connection.
+- **Rates Time Series**: The app displays the time series of exchange rates for a selected currency pair, allowing users to track the rate changes over time.
 - **Request Rate Limiting**: Used API limits the number of request per day for non-paying users. To  users do not exceed the API request limit and in the interest of example purposes, the app restricts the frequency of data refreshes, allowing users to utilize cached data.
 - **Streamlined User Interface**: While the primary emphasis of this example app is on showcasing architecture and code style, it also offers a streamlined user interface. The app's UI design is intentionally kept simple and intuitive, prioritizing a seamless user experience.
 

@@ -1,9 +1,9 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.conversion
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class ApplyConversionRateToAmountUseCaseTest {
+class ApplyConversionRateToAmountUseCaseImplTest {
 
     private val useCase: ApplyConversionRateToAmountUseCase = ApplyConversionRateToAmountUseCaseImpl()
 

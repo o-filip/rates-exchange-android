@@ -38,3 +38,11 @@ fun SpacerVertLarge(modifier: Modifier = Modifier) {
         dimenId = R.dimen.spacing_large
     )
 }
+
+@Composable
+fun SpacerHorizontalMedium(modifier: Modifier = Modifier) {
+    SpacerVertDimen(
+        modifier = modifier,
+        dimenId = R.dimen.spacing_medium
+    )
+}

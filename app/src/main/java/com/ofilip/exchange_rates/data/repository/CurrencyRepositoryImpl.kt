@@ -8,9 +8,11 @@ import com.ofilip.exchange_rates.data.remote.dataStore.CurrencyRemoteDataStore
 import com.ofilip.exchange_rates.data.remote.model.CurrencyRemoteModel
 import com.ofilip.exchange_rates.data.util.RemoteAndLocalModelDiffer
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class CurrencyRepositoryImpl @Inject constructor(
     private val remoteDataStore: CurrencyRemoteDataStore,
@@ -53,8 +55,10 @@ class CurrencyRepositoryImpl @Inject constructor(
     override suspend fun updateCurrencyFavoriteState(
         currency: Currency,
         favoriteState: Boolean
-    ): Result<Unit> = repoDoNoResult {
-        currencyLocalDataStore.update(currency.copy(isFavorite = favoriteState))
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        repoDoNoResult {
+            currencyLocalDataStore.update(currency.copy(isFavorite = favoriteState))
+        }
     }
 
     override fun getCurrency(currencyCode: String): Flow<Result<Currency>> = repoFetch {
@@ -73,7 +77,7 @@ class CurrencyRepositoryImpl @Inject constructor(
         }
 
     override suspend fun areCurrenciesLoaded(): Result<Boolean> = repoDo {
-        Result.success(currencyLocalDataStore.getAll().first().isNotEmpty())
+        currencyLocalDataStore.getAll().first().isNotEmpty()
     }
 
     override val overviewBaseCurrency: Flow<Result<String>>

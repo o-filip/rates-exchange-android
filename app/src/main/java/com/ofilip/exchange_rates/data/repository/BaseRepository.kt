@@ -73,18 +73,26 @@ abstract class BaseRepository {
         throw convertError(ex)
     }
 
+    suspend fun <T> repoFetchSuspend(
+        call: suspend () -> T
+    ): Result<T> = try {
+        Result.success(call())
+    } catch (ex: Exception) {
+        Result.failure(convertError(ex))
+    }
+
 
     suspend fun <T> repoDo(
-        call: suspend () -> Result<T>
-    ) = try {
-        call()
+        call: suspend () -> T
+    ): Result<T> = try {
+        Result.success(call())
     } catch (ex: Exception) {
         Result.failure(convertError(ex))
     }
 
     suspend fun repoDoNoResult(
         call: suspend () -> Unit
-    ) = try {
+    ): Result<Unit> = try {
         Result.success(call())
     } catch (ex: Exception) {
         Result.failure(convertError(ex))

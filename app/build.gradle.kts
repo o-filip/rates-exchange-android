@@ -11,6 +11,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
     id("com.google.protobuf") version "0.9.1"
     id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("io.gitlab.arturbosch.detekt")
 }
 
 val getApkName: (BuildType, DefaultConfig) -> String = { buildType, defaultConfig ->
@@ -22,9 +23,10 @@ val localProps = Properties().apply {
     load(project.rootProject.file("local.properties").inputStream())
 }
 
-val signingProps: Properties? = project.rootProject.file("signing.properties").takeIf { it.exists() }?.let {
-    Properties().apply { load(it.inputStream()) }
-}
+val signingProps: Properties? =
+    project.rootProject.file("signing.properties").takeIf { it.exists() }?.let {
+        Properties().apply { load(it.inputStream()) }
+    }
 
 val STRING = "String"
 val CURRENCY_BEACON_API_KEY = "CURRENCY_BEACON_API_KEY"
@@ -35,7 +37,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ofilip.exchange_rates"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
@@ -141,6 +143,7 @@ dependencies {
     implementation(libs.coreKtx)
     implementation(libs.lifecycleRuntimeKtx)
     implementation(libs.lifecycleViewModelCompose)
+    implementation(libs.lifecycleRuntimeCompose)
     implementation(libs.activityCompose)
     implementation(libs.composeUi)
     implementation(libs.composeMaterial)
@@ -165,6 +168,14 @@ dependencies {
     implementation(libs.swipeRefresh)
     implementation(libs.systemUiController)
     implementation(libs.toolbarCompose)
+    implementation(libs.jodaTime)
+    implementation(libs.material3Android)
+    implementation(libs.flowLayout)
+    implementation(libs.vicoCompose)
+    implementation(libs.vicoCore)
+    implementation(libs.vicoViews)
+    implementation(libs.yCharts)
+    implementation(libs.composeShimmer)
 
     testImplementation(libs.testUnit)
     testImplementation(libs.testJunitJupiterApi)
@@ -174,7 +185,8 @@ dependencies {
     testImplementation(libs.testMockitoKotlin)
     testImplementation(libs.testAndroidxCore)
     testImplementation(libs.testWork)
-    testImplementation(libs.textCoroutinesTest)
+    testImplementation(libs.testCoroutinesTest)
+    testImplementation(libs.jodaTime)
 
     debugImplementation(libs.debugComposeUiTooling)
     debugImplementation(libs.debugComposeUiManifest)

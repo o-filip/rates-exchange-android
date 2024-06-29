@@ -3,8 +3,8 @@ package com.ofilip.exchange_rates.ui.screen.currencySelection
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import com.ofilip.exchange_rates.core.entity.Currency
-import com.ofilip.exchange_rates.data.repository.CurrencyRepository
-import com.ofilip.exchange_rates.domain.useCase.GetFilteredCurrenciesUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetFilteredCurrenciesUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.UpdateCurrencyFavoriteStateUseCase
 import com.ofilip.exchange_rates.fixtures.Fixtures
 import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess
 import com.ofilip.exchange_rates.ui.util.UiErrorConverter
@@ -21,16 +21,16 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 
 @ExperimentalCoroutinesApi
 class CurrencySelectionViewModelTest {
     private val mockGetFilteredCurrenciesUseCase: GetFilteredCurrenciesUseCase = mock()
-    private val mockCurrencyRepository: CurrencyRepository = mock()
+    private val mockUpdateCurrencyFavoriteStateUseCase: UpdateCurrencyFavoriteStateUseCase = mock()
     private val mockUiErrorConverter: UiErrorConverter = mock()
     private val testCoroutineScope: TestDispatcher = StandardTestDispatcher()
 
@@ -44,27 +44,23 @@ class CurrencySelectionViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createTestSubject(mode: CurrencySelectionMode): CurrencySelectionViewModel =
+    private fun createTestSubject(
+        preselectedCurrencies: String = "",
+    ): CurrencySelectionViewModel =
         CurrencySelectionViewModel(
             savedStateHandle = SavedStateHandle(
                 mapOf(
-                    "mode" to mode,
+                    "preselectedCurrencies" to preselectedCurrencies,
                 )
             ),
             getFilteredCurrencies = mockGetFilteredCurrenciesUseCase,
-            currencyRepository = mockCurrencyRepository,
+            updateCurrencyFavoriteStateUseCase = mockUpdateCurrencyFavoriteStateUseCase,
             uiErrorConverter = mockUiErrorConverter
         )
 
     private fun prepareSuccessfulMock(
         mockCurrencies: List<Currency> = Fixtures.currencies,
-        preselectedCurrency: String = "USD"
     ) {
-        mockCurrencyRepository.stub {
-            on { overviewBaseCurrency } doReturn MutableStateFlow(
-                Result.success(preselectedCurrency)
-            )
-        }
         mockGetFilteredCurrenciesUseCase.stub {
             onBlocking { execute(any(), any()) } doReturn mockCurrencies.toFlowOfSuccess()
         }
@@ -72,21 +68,20 @@ class CurrencySelectionViewModelTest {
 
 
     @Test
-    fun `init initializes preselected currencies and initializes filtering currencies by query text`() =
+    fun `init initializes preselected currencies and initializes filtering currencies by empty query text`() =
         runTest {
             // Given
-            val viewModel = createTestSubject(CurrencySelectionMode.OverviewCurrency)
+            val viewModel = createTestSubject(preselectedCurrencies = "EUR")
             val mockCurrencies = Fixtures.currencies
-            val preselectedCurrency = "USD"
-            prepareSuccessfulMock(mockCurrencies, preselectedCurrency)
+            prepareSuccessfulMock(mockCurrencies)
 
             val expectedState = CurrencySelectionUiState(
                 currencies = mockCurrencies,
                 query = TextFieldValue(),
                 showOnlyFavorites = false,
-                preselectedCurrency = preselectedCurrency,
                 filteringErrorMessage = null,
-                wasCurrencySelected = false
+                userSelectedCurrency = null,
+                selectedCurrencies = listOf("EUR")
             )
 
             // When
@@ -94,52 +89,31 @@ class CurrencySelectionViewModelTest {
             advanceUntilIdle()
 
             // Then
-            verify(mockCurrencyRepository).overviewBaseCurrency
             verify(mockGetFilteredCurrenciesUseCase).execute("", false)
             assertEquals(expectedState, viewModel.uiState.value)
         }
 
-    @Test
-    fun `init prefetches correct currency based on mode for ConversionCurrencyFrom`() =
-        runTest {
-            // Given
-            val viewModel = createTestSubject(CurrencySelectionMode.ConversionCurrencyFrom)
-            val mockCurrencies = Fixtures.currencies
-            val preselectedCurrency = "USD"
-            mockCurrencyRepository.stub {
-                on { conversionCurrencyFrom } doReturn MutableStateFlow(
-                    Result.success(preselectedCurrency)
-                )
-            }
-            mockGetFilteredCurrenciesUseCase.stub {
-                onBlocking { execute(any(), any()) } doReturn mockCurrencies.toFlowOfSuccess()
-            }
-
-            // When
-            viewModel.init()
-            advanceUntilIdle()
-
-            // Then
-            verify(mockCurrencyRepository).conversionCurrencyFrom
-            assertEquals(preselectedCurrency, viewModel.uiState.value.preselectedCurrency)
-        }
 
     @Test
-    fun `onQueryUpdated updates UI state with filtered currencies`() = runTest {
+    fun `onQueryUpdated updates UI state with filtered text and calls currency filter use case`() = runTest {
         // Given
-        val viewModel = createTestSubject(CurrencySelectionMode.OverviewCurrency)
         val preselectedCurrency = "USD"
+        val viewModel = createTestSubject(preselectedCurrency)
         val mockCurrencies = Fixtures.currencies
         val queriedCurrency = "EUR"
-        prepareSuccessfulMock(mockCurrencies, preselectedCurrency)
+        prepareSuccessfulMock(mockCurrencies)
+
+        mockGetFilteredCurrenciesUseCase.stub {
+            onBlocking { execute(any(), any()) } doReturn mockCurrencies.subList(0, 1).toFlowOfSuccess()
+        }
 
         val expectedState = CurrencySelectionUiState(
-            currencies = mockCurrencies,
+            currencies = mockCurrencies.subList(0, 1),
             query = TextFieldValue(queriedCurrency),
             showOnlyFavorites = false,
-            preselectedCurrency = preselectedCurrency,
             filteringErrorMessage = null,
-            wasCurrencySelected = false
+            userSelectedCurrency = null,
+            selectedCurrencies = listOf(preselectedCurrency)
         )
 
         // When
@@ -153,20 +127,19 @@ class CurrencySelectionViewModelTest {
     }
 
     @Test
-    fun `toggleShowOnlyFavorites updates UI state with favorite currencies`() = runTest {
+    fun `toggleShowOnlyFavorites updates UI state with favorite toggle and filter currencies`() = runTest {
         // Given
-        val viewModel = createTestSubject(CurrencySelectionMode.OverviewCurrency)
-        val preselectedCurrency = "USD"
+        val viewModel = createTestSubject("USD")
         val mockCurrencies = Fixtures.currencies
-        prepareSuccessfulMock(mockCurrencies, preselectedCurrency)
+        prepareSuccessfulMock(mockCurrencies)
 
         val expectedState = CurrencySelectionUiState(
             currencies = mockCurrencies,
             query = TextFieldValue(),
             showOnlyFavorites = true,
-            preselectedCurrency = preselectedCurrency,
             filteringErrorMessage = null,
-            wasCurrencySelected = false
+            userSelectedCurrency = null,
+            selectedCurrencies = listOf("USD")
         )
 
         // When
@@ -175,26 +148,7 @@ class CurrencySelectionViewModelTest {
         advanceUntilIdle()
 
         // Then
-        verify(mockCurrencyRepository).overviewBaseCurrency
         verify(mockGetFilteredCurrenciesUseCase).execute("", true)
         assertEquals(expectedState, viewModel.uiState.value)
-    }
-
-    @Test
-    fun `toggleCurrencyLike changes currency like status`() = runTest {
-        val viewModel = createTestSubject(CurrencySelectionMode.OverviewCurrency)
-        val preselectedCurrency = "USD"
-        val mockCurrencies = Fixtures.currencies
-        prepareSuccessfulMock(mockCurrencies, preselectedCurrency)
-
-        mockCurrencyRepository.stub {
-            onBlocking { updateCurrencyFavoriteState(any(), any()) } doReturn Result.success(Unit)
-        }
-
-        viewModel.init()
-        viewModel.toggleCurrencyLike(mockCurrencies[0])
-        advanceUntilIdle()
-
-        verify(mockCurrencyRepository).updateCurrencyFavoriteState(mockCurrencies[0], true)
     }
 }

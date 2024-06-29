@@ -37,6 +37,7 @@ class App : Application(), Configuration.Provider {
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             )
             // Delay because, on first start, currencies are already automatically loaded
+            // via app initialization
             .setInitialDelay(1, TimeUnit.DAYS)
             .build()
 

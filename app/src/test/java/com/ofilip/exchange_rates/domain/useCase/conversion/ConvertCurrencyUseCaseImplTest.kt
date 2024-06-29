@@ -1,7 +1,8 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.conversion
 
 import com.ofilip.exchange_rates.core.entity.CurrencyRate
 import com.ofilip.exchange_rates.core.error.DomainError
+import com.ofilip.exchange_rates.domain.useCase.rate.GetBaseRatesOfAllCurrenciesUseCase
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -59,7 +60,7 @@ class ConvertCurrencyUseCaseTest {
             val fromCurrencyCode = "CAD"
             val toCurrencyCode = "USD"
 
-            val result = useCase.convert(amount, fromCurrencyCode, toCurrencyCode)
+            val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
 
             assertEquals(
                 Result.failure<Double?>(DomainError.CurrencyRateNotFound(fromCurrencyCode)),
@@ -74,7 +75,7 @@ class ConvertCurrencyUseCaseTest {
             val fromCurrencyCode = "USD"
             val toCurrencyCode = "CAD"
 
-            val result = useCase.convert(amount, fromCurrencyCode, toCurrencyCode)
+            val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
 
             assertEquals(Result.failure<Double?>(DomainError.CurrencyRateNotFound(toCurrencyCode)), result)
         }
@@ -86,7 +87,7 @@ class ConvertCurrencyUseCaseTest {
             val fromCurrencyCode = "NONE"
             val toCurrencyCode = "EUR"
 
-            val result = useCase.convert(amount, fromCurrencyCode, toCurrencyCode)
+            val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
 
             assertEquals(Result.success(null), result)
         }
@@ -99,7 +100,7 @@ class ConvertCurrencyUseCaseTest {
             val fromCurrencyCode = "USD"
             val toCurrencyCode = "GBP"
 
-            val result = useCase.convert(amount, fromCurrencyCode, toCurrencyCode)
+            val result = useCase.execute(amount, fromCurrencyCode, toCurrencyCode)
 
             assertEquals(Result.success(mockConversionResult), result)
         }

@@ -1,6 +1,8 @@
 package com.ofilip.exchange_rates.data.local.room.dataStore
 
 import com.ofilip.exchange_rates.core.error.DataError
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 interface BaseRoomDataStore {
@@ -11,18 +13,20 @@ interface BaseRoomDataStore {
 
     fun <T> roomFetch(
         call: () -> T
-    ): T = try {
-            call()
-        } catch (ex: Exception) {
-            throw convertError(ex)
-        }
+    ): T =  try {
+        call()
+    } catch (ex: Exception) {
+        throw convertError(ex)
+    }
 
-    suspend fun  roomDo(
+    suspend fun roomDo(
         call: suspend () -> Unit
-    ) = try {
+    ) = withContext(Dispatchers.IO) {
+        try {
             call()
         } catch (ex: Exception) {
             throw convertError(ex)
         }
+    }
 
 }

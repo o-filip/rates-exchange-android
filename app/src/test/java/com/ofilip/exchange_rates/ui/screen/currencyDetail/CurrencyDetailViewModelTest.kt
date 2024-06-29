@@ -1,7 +1,7 @@
 package com.ofilip.exchange_rates.ui.screen.currencyDetail
 
 import androidx.lifecycle.SavedStateHandle
-import com.ofilip.exchange_rates.domain.useCase.GetCurrencyUseCase
+import com.ofilip.exchange_rates.domain.useCase.currency.GetCurrencyUseCase
 import com.ofilip.exchange_rates.fixtures.Fixtures
 import com.ofilip.exchange_rates.fixtures.toFlowOfFailure
 import com.ofilip.exchange_rates.fixtures.toFlowOfSuccess

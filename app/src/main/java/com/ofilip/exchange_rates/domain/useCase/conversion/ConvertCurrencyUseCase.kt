@@ -1,11 +1,12 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.conversion
 
 import com.ofilip.exchange_rates.core.error.DomainError
+import com.ofilip.exchange_rates.domain.useCase.rate.GetBaseRatesOfAllCurrenciesUseCase
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 
 interface ConvertCurrencyUseCase {
-    suspend fun convert(
+    suspend fun execute(
         amount: Double,
         fromCurrencyCode: String,
         toCurrencyCode: String
@@ -16,7 +17,7 @@ class ConvertCurrencyUseCaseImpl @Inject constructor(
     private val getRatesOfAllCurrenciesUseCase: GetBaseRatesOfAllCurrenciesUseCase,
     private val applyConversionRateToAmountUseCase: ApplyConversionRateToAmountUseCase
 ) : ConvertCurrencyUseCase {
-    override suspend fun convert(
+    override suspend fun execute(
         amount: Double,
         fromCurrencyCode: String,
         toCurrencyCode: String

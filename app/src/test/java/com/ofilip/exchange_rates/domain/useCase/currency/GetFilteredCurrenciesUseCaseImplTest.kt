@@ -1,4 +1,4 @@
-package com.ofilip.exchange_rates.domain.useCase
+package com.ofilip.exchange_rates.domain.useCase.currency
 
 import com.ofilip.exchange_rates.core.entity.Currency
 import com.ofilip.exchange_rates.data.repository.CurrencyRepository
@@ -16,7 +16,7 @@ import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 
 
-class GetFilteredCurrenciesUseCaseTest {
+class GetFilteredCurrenciesUseCaseImplTest {
 
     private val mockCurrencyRepository: CurrencyRepository = mock()
     private val useCase = GetFilteredCurrenciesUseCaseImpl(
