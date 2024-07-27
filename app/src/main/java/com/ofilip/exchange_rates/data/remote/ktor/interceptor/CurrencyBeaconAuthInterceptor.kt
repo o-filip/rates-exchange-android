@@ -1,4 +1,4 @@
-package com.ofilip.exchange_rates.data.remote.retrofit.interceptor
+package com.ofilip.exchange_rates.data.remote.ktor.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response

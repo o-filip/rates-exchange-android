@@ -1,8 +1,9 @@
 package com.ofilip.exchange_rates.data.local.room
 
 import androidx.room.TypeConverter
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.core.type.TypeReference
+
 
 class DatabaseConvertors {
 

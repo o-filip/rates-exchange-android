@@ -2,23 +2,38 @@
 
 ## Project overview
 
-The Currency Exchange Rates App is an example Android application designed to demonstrate practices for architecture, code style, and various features and can be used as a template for other projects. Even though the app itself is relatively simple, the architecture of the project has been designed to showcase a medium-scale project structure. This approach allows for a demonstration of how the architecture can scale and accommodate more complex features.
+The Currency Exchange Rates App is an example Android application designed to demonstrate practices 
+for architecture, code style and various features. 
+Even though the app itself is relatively simple, the architecture of the project has been designed 
+to showcase a medium-scale project structure. This approach allows for a demonstration of how the 
+architecture can scale and accommodate more complex features.
 
-It provides users with up-to-date currency exchange rates obtained from the [Currency beacon API](https://currencybeacon.com/), allowing them to convert between different currencies. The app also incorporates offline functionality to ensure a seamless user experience even without an internet connection.
+It provides users with up-to-date currency exchange rates obtained from the 
+[Currency beacon API](https://currencybeacon.com/), allowing them to convert between different currencies. The app also 
+incorporates offline functionality to ensure a seamless user experience even without an internet connection.
 
 ### Key Features:
 
-- **Currency Exchange Rates**: The app fetches current currency exchange rates from the [Currency beacon API](https://currencybeacon.com/)  and displays them in a user-friendly list format.
+- **Currency Exchange Rates**: The app fetches current currency exchange rates from the 
+    [Currency beacon API](https://currencybeacon.com/)  and displays them in a user-friendly list format.
 - **Currency Conversion**: Users can convert between different currencies using the exchange rates provided.
-- **Offline Mode**: The app offers offline functionality using local database, enabling users to access previously fetched exchange rates and perform currency conversions without an internet connection.
-- **Rates Time Series**: The app displays the time series of exchange rates for a selected currency pair, allowing users to track the rate changes over time.
-- **Request Rate Limiting**: Used API limits the number of request per day for non-paying users. To  users do not exceed the API request limit and in the interest of example purposes, the app restricts the frequency of data refreshes, allowing users to utilize cached data.
-- **Streamlined User Interface**: While the primary emphasis of this example app is on showcasing architecture and code style, it also offers a streamlined user interface. The app's UI design is intentionally kept simple and intuitive, prioritizing a seamless user experience.
+- **Offline Mode**: The app offers offline functionality using local database, enabling users  
+    to access previously fetched exchange rates and perform currency conversions without an internet connection.
+- **Rates Time Series**: The app displays the time series of exchange rates for a selected 
+    currency pair, allowing users to track the rate changes over time.
+- **Request Rate Limiting**: Used API limits the number of request per day for non-paying users. 
+    To  users do not exceed the API request limit and in the interest of example purposes, the app 
+    restricts the frequency of data refreshes, allowing users to utilize cached data.
+- **Streamlined User Interface**: While the primary emphasis of this example app is on showcasing 
+    architecture and code style, it also offers a streamlined user interface. The app's UI design 
+    is intentionally kept simple and intuitive, prioritizing a seamless user experience.
 
 ## Installation
 ### Step 1: Create local.properties
 
-In the root directory of the project, create a file named `local.properties` (if it doesn't already exist). This file should contain the necessary configuration for the app to function correctly. You can use the provided `local.properties.example` file as a reference for the required format.
+In the root directory of the project, create a file named `local.properties` (if it doesn't 
+already exist). This file should contain the necessary configuration for the app to function 
+correctly. You can use the provided `local.properties.example` file as a reference for the required format.
 
 Ensure that you include the following information in the `local.properties` file:
 ```
@@ -26,11 +41,14 @@ Ensure that you include the following information in the `local.properties` file
 currencyBeacon.apiKey=<your-api-key> 
 ```
 
-Testing API key can be used: `9f8c8014d1fdb81c07bc33e55a7bd3ac`. In case the request limit for this key is exceeded you can obtain your own API key after free registration on [CurrencyBeacon API](https://currencybeacon.com/).
+Testing API key can be used: `9f8c8014d1fdb81c07bc33e55a7bd3ac`. In case the request limit 
+for this key is exceeded you can obtain your own API key after free registration on [CurrencyBeacon API](https://currencybeacon.com/).
 
 ### Step 2: Create signing.properties (optional)
 
-In the root directory of the project, create a file named `signing.properties`. This file is used for signing the app during the build process. You can use the provided `signing.properties.example` file as a reference for the required format.
+In the root directory of the project, create a file named `signing.properties`. This file is 
+used for signing the app during the build process. You can use the provided 
+`signing.properties.example` file as a reference for the required format.
 
 Ensure that you include the following information in the `signing.properties` file:
 
@@ -56,23 +74,33 @@ Please note that it's important to keep the signing properties file secure and a
 
 ### Step 3: Build and Run
 
-After completing the above steps, you should be ready to build and run the Android app. Use your preferred method to compile and launch the application, such as using Android Studio or the command line.
+After completing the above steps, you should be ready to build and run the Android app. Use your 
+preferred method to compile and launch the application, such as using Android Studio or the command line.
 
-If you encounter any issues during the installation process, please refer to the project documentation or seek assistance from the project maintainers.
+If you encounter any issues during the installation process, please refer to the project 
+documentation or seek assistance from the project maintainers.
 
 ## Project Architecture
 
-The app follows a clean architecture pattern in combination with MVVM  and utilizes the Jetpack libraries, with a specific focus on Jetpack Compose for the UI layer. The architecture is designed to incorporate up-to-date technologies and best practices provided by the Android Jetpack components.
+The app follows a clean architecture pattern in combination with MVVM  and utilizes the Jetpack 
+libraries, with a specific focus on Jetpack Compose for the UI layer. The architecture is 
+designed to incorporate up-to-date technologies and best practices provided by the Android Jetpack components.
 
 The app is structured into three main layers: data, domain, and UI.
 
-- **Data Layer** - The data layer is responsible for handling data communication with the API, storing data into a local database, and providing access points to this layer through repositories.
+- **Data Layer** - The data layer is responsible for handling data communication with the API, 
+    storing data into a local database, and providing access points to this layer through repositories.
 
-- **Domain Layer** -  The domain layer contains the business logic of the application. It encompasses a set of use cases and workers that define how the app interacts with data and executes tasks.
+- **Domain Layer** -  The domain layer contains the business logic of the application. It 
+    encompasses a set of use cases and workers that define how the app interacts with data and executes tasks.
 
-- **UI Layer** - The UI layer is responsible for presenting the user interface using Jetpack Compose. It includes the UI components, views, and view models.
+- **UI Layer** - The UI layer is responsible for presenting the user interface using Jetpack 
+    Compose. It includes the UI components, views, and view models.
 
-Communication between the layers is structured in a one-way manner, following a unidirectional data flow. User interactions in the UI layer are propagated to the domain layer, which processes the requests and communicates with the data layer for data retrieval or modification. Once the data is updated, the UI layer receives the updated data and reflects the changes in the user interface.
+Communication between the layers is structured in a one-way manner, following a unidirectional 
+data flow. User interactions in the UI layer are propagated to the domain layer, which processes 
+the requests and communicates with the data layer for data retrieval or modification. Once the 
+data is updated, the UI layer receives the updated data and reflects the changes in the user interface.
 
 ## Used technologies, libraries
 
@@ -82,10 +110,11 @@ Communication between the layers is structured in a one-way manner, following a 
 -   [Coroutines](https://developer.android.com/kotlin/coroutines): Used to achieve app reactivity, update the UI based on data changes, and handle asynchronous tasks efficiently.
 -   [Room](https://developer.android.com/jetpack/androidx/releases/room): Used for storing the retrieved currency exchange rates and enabling offline mode functionality in the app.
 -   [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager): Used for performing periodic updates of the currency exchange rates fetched from the API.
--   [Retrofit](https://square.github.io/retrofit/): Used for handling API communication.
+-   [Ktor](https://github.com/ktorio/ktor): Used for handling API communication.
 -   [Accompanist](https://github.com/google/accompanist): Collection of UI-related libraries that enhance the user interface and provide additional functionalities in the app.
 -   [Hilt](https://developer.android.com/training/dependency-injection/hilt-android): Used for dependency injection.
--   [Datastore](https://developer.android.com/topic/libraries/architecture/datastore): Used for storing simple data such as the last selected currencies for conversion and the last update time, ensuring persistence of this data across app sessions.
+-   [Datastore](https://developer.android.com/topic/libraries/architecture/datastore): Used for storing simple data such as the last selected currencies for 
+    conversion and the last update time, ensuring persistence of this data across app sessions.
 
 Additionally, the project also utilizes the following libraries for logging, testing, and mocking:
 
@@ -94,7 +123,9 @@ Additionally, the project also utilizes the following libraries for logging, tes
 -   [Mockito](https://site.mockito.org/): Used for creating mock objects and performing mocking in unit tests to isolate dependencies.
 
 ## Project packages structure
-Project packages structure is divided into 4 main packages. 3 of them (`data`, `domain`, `UI`) mirror the Clean Architecture division described in Project architecture section. `core` package contains classes used across multiple layers.
+Project packages structure is divided into 4 main packages. 3 of them (`data`, `domain`, `UI`) mirror 
+the Clean Architecture division described in Project architecture section. `core` package contains 
+classes used across multiple layers.
 ```
 core
   ├── di                    # Dependency injection (Hilt)
@@ -109,7 +140,7 @@ data
   ├── remote                # Contains classes for managing and retrieving data from remote storage (e.g. API)
   │   ├── dataStore         # Data stores as an abstraction to access remotely stored data
   │   ├── model             # Remote models (format of API response)
-  │   └── retrofit          # Concrete implementation of Retrofit
+  │   └── ktor              # Concrete implementation of Ktor
   ├── repository            # Repositories as an access point to the data layer and abstraction from concrete technologies used for storing data
   └── util                  # Data-related utility classes and helpers
 domain
@@ -125,7 +156,8 @@ ui
 ```
 ## Testing
 
-The app includes unit tests to ensure the correctness of the application's logic and behavior. The tests are written using JUnit and Mockito.
+The app includes unit tests to ensure the correctness of the application's logic and behavior. 
+The tests are written using JUnit and Mockito.
 
 ### Unit Tests
 
