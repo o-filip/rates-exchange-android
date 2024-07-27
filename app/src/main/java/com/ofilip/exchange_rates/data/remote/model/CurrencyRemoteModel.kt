@@ -1,24 +1,24 @@
 package com.ofilip.exchange_rates.data.remote.model
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Serializable
 data class CurrencyRemoteModel(
-    @JsonProperty("short_code")
+    @SerialName("short_code")
     val currencyCode: String,
-    @JsonProperty("name")
+    @SerialName("name")
     val name: String?,
-    @JsonProperty("code")
+    @SerialName("code")
     val numberCode: String?,
-    @JsonProperty("precision")
+    @SerialName("precision")
     val precision: Int?,
-    @JsonProperty("symbol")
+    @SerialName("symbol")
     val symbol: String?,
-    @JsonProperty("symbol_first")
+    @SerialName("symbol_first")
     val symbolFirst: Boolean?,
-    @JsonProperty("thousands_separator")
+    @SerialName("thousands_separator")
     val thousandsSeparator: String?,
-    @JsonProperty("decimal_mark")
+    @SerialName("decimal_mark")
     val decimalSeparator: String?,
 )

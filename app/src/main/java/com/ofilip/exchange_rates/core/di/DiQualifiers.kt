@@ -13,7 +13,7 @@ annotation class CurrencyBeaconApiKey
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class CurrencyBeaconApiWsGenerator
+annotation class CurrencyBeaconClient
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

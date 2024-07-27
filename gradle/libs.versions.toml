@@ -5,17 +5,13 @@ activity-compose = "1.9.0"
 compose-ui = "1.6.8"
 compose-material = "1.6.8"
 junit = "4.13.2"
-retrofit = "2.9.0"
-retrofit-logging = "4.9.0"
 room = "2.6.1"
-gson = "2.10.1"
 hilt = "2.49"
 hilt-navigation-compose = "1.2.0"
 lifecycle-viewmodel-compose = "2.8.2"
 compose-navigation = "2.8.0-beta04"
 lifecycle-runtime-compose = "2.8.2"
 coroutines = "1.8.0"
-retrofit-converter-jackson = "2.11.0"
 timber = "5.0.1"
 datastore = "1.1.1"
 hilt-work = "1.2.0"
@@ -47,6 +43,8 @@ y-charts = "2.1.0"
 compose-shimmer = "1.3.0"
 devtools-ksp = "1.9.20-1.0.14"
 serialization = "1.5.1"
+jackson = "2.17.2"
+ktor = "2.3.12"
 
 [libraries]
 core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
@@ -64,15 +62,12 @@ compose-ui-preview = { module = "androidx.compose.ui:ui-tooling-preview", versio
 compose-navigation = { module = "androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-retrofit-core = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-retrofit-converter-jackson = { module = "com.squareup.retrofit2:converter-jackson", version.ref = "retrofit-converter-jackson" }
-retrofit-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "retrofit-logging" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-work" }
 swipe-refresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swipe-refresh" }
 system-ui-controller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "system-ui-controller" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+
 material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3-android" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
@@ -88,6 +83,14 @@ y-charts = { module = "co.yml:ycharts", version.ref = "y-charts" }
 compose-shimmer = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "compose-shimmer" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 # Debug dependencies
 debug-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-ui" }

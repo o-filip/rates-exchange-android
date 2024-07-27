@@ -1,14 +1,15 @@
 package com.ofilip.exchange_rates.core.di
 
 import com.ofilip.exchange_rates.BuildConfig
-import com.ofilip.exchange_rates.data.remote.retrofit.generator.WsGenerator
-import com.ofilip.exchange_rates.data.remote.retrofit.generator.WsGeneratorOptions
-import com.ofilip.exchange_rates.data.remote.retrofit.interceptor.CurrencyBeaconAuthInterceptor
-import com.ofilip.exchange_rates.data.remote.retrofit.service.CurrencyService
+import com.ofilip.exchange_rates.data.remote.ktor.utils.KtorLogger
+import com.ofilip.exchange_rates.data.remote.ktor.generator.KtorWsGenerator
+import com.ofilip.exchange_rates.data.remote.ktor.service.CurrencyService
+import com.ofilip.exchange_rates.data.remote.ktor.interceptor.CurrencyBeaconAuthInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -22,11 +23,8 @@ class RemoteDataStoreModule {
     @Provides
     fun provideBaseApiUrl(): String = BuildConfig.CURRENCY_BEACON_API_KEY
 
-    @CurrencyBeaconApiWsGenerator
     @Provides
-    fun provideNewsApiWsGenerator(
-        @BaseCurrencyBeaconApiUrl baseUrl: String,
-    ): WsGenerator = WsGenerator(apiBaseUrl = baseUrl)
+    fun provideNewsApiWsGenerator(): KtorWsGenerator = KtorWsGenerator()
 
     @Provides
     fun provideCurrencyBeaconApiAuthInterceptor(
@@ -34,14 +32,23 @@ class RemoteDataStoreModule {
     ): CurrencyBeaconAuthInterceptor = CurrencyBeaconAuthInterceptor(apiKey)
 
     @Provides
-    fun provideCurrencyService(
-        @CurrencyBeaconApiWsGenerator wsGenerator: WsGenerator,
-        authInterceptor: CurrencyBeaconAuthInterceptor
-    ): CurrencyService = wsGenerator.createService(
-        CurrencyService::class.java,
-        options = WsGeneratorOptions(
-            interceptors = listOf(authInterceptor),
-        )
+    fun provideKtorLogger(): KtorLogger = KtorLogger()
+
+    @CurrencyBeaconClient
+    @Provides
+    fun provideHttpClient(
+        wsGenerator: KtorWsGenerator,
+        authInterceptor: CurrencyBeaconAuthInterceptor,
+        @BaseCurrencyBeaconApiUrl baseUrl: String,
+        logger: KtorLogger
+    ): HttpClient = wsGenerator.createClient(
+        baseUrl,
+        listOf(authInterceptor),
+        logger
     )
 
+    @Provides
+    fun provideCurrencyService(
+        @CurrencyBeaconClient client: HttpClient
+    ): CurrencyService = CurrencyService(client)
 }
